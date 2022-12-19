@@ -56,6 +56,10 @@ public class TypeInformationResolver {
     }
 
     private PropertyInformation resolveTypeInformation(UnresolvedTypePropertyInformation unresolvedTypePI) {
+        if(resolvedTypeInformation.containsKey(unresolvedTypePI.type())) {
+            MutableTypeInformation ti = resolvedTypeInformation.get(unresolvedTypePI.type());
+            return StructuredPropertyInformationImpl.of(unresolvedTypePI.name(), unresolvedTypePI.logicalName(), ti);
+        }
         return Optional.of(unresolvedTypePI)
                 .map(pi -> elements.getTypeElement(pi.type()))
                 .map(te -> resolveTypeElement(te, unresolvedTypePI.propertyAccessMode(), unresolvedTypePI.getterPattern()))
