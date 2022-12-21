@@ -15,6 +15,14 @@
     <dependencies>
         <dependency>
             <groupId>com.github.gauthierj</groupId>
+            <artifactId>metamodel-annotation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.gauthierj</groupId>
+            <artifactId>metamodel-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.gauthierj</groupId>
             <artifactId>metamodel-processor</artifactId>
             <scope>provided</scope>
         </dependency>
