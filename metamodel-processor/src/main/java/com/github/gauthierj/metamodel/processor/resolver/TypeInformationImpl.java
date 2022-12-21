@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class MutableTypeInformation implements TypeInformation {
+public class TypeInformationImpl implements TypeInformation {
 
     private final String packageName;
     private final String className;
@@ -16,21 +16,21 @@ public class MutableTypeInformation implements TypeInformation {
     private final PropertyAccessMode propertyAccessMode;
     private final List<PropertyInformation> propertyInformations = new ArrayList<>();
 
-    private MutableTypeInformation(String packageName,
-                                   String className,
-                                   String generatedClassName,
-                                   PropertyAccessMode propertyAccessMode) {
+    private TypeInformationImpl(String packageName,
+                                String className,
+                                String generatedClassName,
+                                PropertyAccessMode propertyAccessMode) {
         this.packageName = packageName;
         this.className = className;
         this.generatedClassName = generatedClassName;
         this.propertyAccessMode = propertyAccessMode;
     }
 
-    public static MutableTypeInformation of(String packageName,
-                                            String className,
-                                            String generatedClassName,
-                                            PropertyAccessMode propertyAccessMode) {
-        return new MutableTypeInformation(packageName, className, generatedClassName, propertyAccessMode);
+    public static TypeInformationImpl of(String packageName,
+                                         String className,
+                                         String generatedClassName,
+                                         PropertyAccessMode propertyAccessMode) {
+        return new TypeInformationImpl(packageName, className, generatedClassName, propertyAccessMode);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class MutableTypeInformation implements TypeInformation {
                 .anyMatch(propertyInformation -> propertyInformation instanceof UnresolvedTypePropertyInformation);
     }
 
-    public MutableTypeInformation withProperties(Collection<PropertyInformation> properties) {
+    public TypeInformationImpl withProperties(Collection<PropertyInformation> properties) {
         this.propertyInformations.clear();
         this.propertyInformations.addAll(properties);
         return this;

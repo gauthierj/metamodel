@@ -8,11 +8,11 @@ import java.util.Optional;
 
 public class TypeElementVisitorContext {
 
-    private final Map<String, MutableTypeInformation> resolvedTypes = new HashMap<>();
+    private final Map<TypeInformationKey, TypeInformationImpl> resolvedTypes = new HashMap<>();
     private final PropertyAccessMode propertyAccessMode;
     private final String getterPattern;
 
-    private TypeElementVisitorContext(Map<String, MutableTypeInformation> resolvedTypes,
+    private TypeElementVisitorContext(Map<TypeInformationKey, TypeInformationImpl> resolvedTypes,
                                       PropertyAccessMode propertyAccessMode,
                                       String getterPattern) {
         this.propertyAccessMode = propertyAccessMode;
@@ -20,14 +20,14 @@ public class TypeElementVisitorContext {
         this.getterPattern = getterPattern;
     }
 
-    public static TypeElementVisitorContext of(Map<String, MutableTypeInformation> resolvedTypes,
+    public static TypeElementVisitorContext of(Map<TypeInformationKey, TypeInformationImpl> resolvedTypes,
                                                PropertyAccessMode propertyAccessMode,
                                                String getterPattern) {
         return new TypeElementVisitorContext(resolvedTypes, propertyAccessMode, getterPattern);
     }
 
-    public Map<String, MutableTypeInformation> getResolvedTypes() {
-        return resolvedTypes;
+    public Map<TypeInformationKey, TypeInformationImpl> getResolvedTypes() {
+        return Map.copyOf(resolvedTypes);
     }
 
     public String getGetterPattern() {

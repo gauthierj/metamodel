@@ -1,13 +1,12 @@
 package com.github.gauthierj.metamodel.processor.resolver;
 
 import com.github.gauthierj.metamodel.processor.ModelProcessor;
+import com.github.gauthierj.metamodel.processor.util.StringUtils;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import java.util.Optional;
 import java.util.ServiceLoader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PropertyNameProvider {
 

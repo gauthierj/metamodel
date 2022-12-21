@@ -4,7 +4,12 @@ import com.github.gauthierj.metamodel.annotation.PropertyAccessMode;
 import com.github.gauthierj.metamodel.generator.model.PropertyInformation;
 import com.github.gauthierj.metamodel.generator.model.SimplePropertyInformationImpl;
 import com.github.gauthierj.metamodel.generator.model.StructuredPropertyInformationImpl;
+import com.github.gauthierj.metamodel.generator.model.TypeInformation;
+import com.github.gauthierj.metamodel.generator.model.TypeInformationImpl;
 import com.github.gauthierj.metamodel.generator.model.UnsupportedPropertyInformationImpl;
+import com.github.gauthierj.metamodel.model._Model;
+import com.github.gauthierj.metamodel.processor.util.StringUtils;
+import com.github.gauthierj.metamodel.processor.util.TypeUtil;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -19,9 +24,13 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.github.gauthierj.metamodel.processor.resolver.ElementUtil.*;
+import static com.github.gauthierj.metamodel.processor.util.ElementUtil.*;
 
 public class TypeElementVisitorImpl implements TypeElementVisitor {
+
+    private static final TypeInformation _MODEL_TYPE_INFORMATION = TypeInformationImpl.of(
+            _Model.class.getPackageName(),
+            _Model.class.getSimpleName());
 
     private final Types types;
     private final Elements elements;
@@ -96,6 +105,12 @@ public class TypeElementVisitorImpl implements TypeElementVisitor {
         if (typeUtil.isSimpleType(actualType)) {
             return SimplePropertyInformationImpl.of(name, logicalName);
         }
+        if (typeUtil.isMap(actualType)) {
+            return StructuredPropertyInformationImpl.of(
+                    name,
+                    logicalName,
+                    _MODEL_TYPE_INFORMATION);
+        }
         return getTypeElement(actualType)
                 .map(actualTypeElement -> getPropertyInformation(element, actualTypeElement, name, logicalName, context))
                 .orElseGet(() -> UnsupportedPropertyInformationImpl.of(
@@ -124,7 +139,7 @@ public class TypeElementVisitorImpl implements TypeElementVisitor {
         String generatedClassName = getGeneratedClassName(element, actualTypeElement);
 
         return Optional.of(context.getResolvedTypes())
-                .map(resolvedTypes -> resolvedTypes.get(actualTypeElement.getQualifiedName() + "_" + generatedClassName))
+                .map(resolvedTypes -> resolvedTypes.get(TypeInformationKey.of(actualTypeElement.getQualifiedName().toString(), generatedClassName)))
                 .map(resolvedType -> (PropertyInformation) StructuredPropertyInformationImpl.of(
                         name,
                         logicalName,

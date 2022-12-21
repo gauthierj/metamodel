@@ -1,13 +1,15 @@
-package com.github.gauthierj.metamodel.processor.resolver;
+package com.github.gauthierj.metamodel.processor.util;
 
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -22,6 +24,8 @@ public class TypeUtil {
     private final Elements elements;
     private final Set<TypeMirror> TYPE_WRAPPER_TYPES;
     private final Set<TypeMirror> SIMPLE_TYPES;
+
+    private final TypeMirror MAP_TYPE;
 
     public TypeUtil(Types types, Elements elements) {
         this.types = types;
@@ -51,6 +55,13 @@ public class TypeUtil {
                 .map(cls -> elements.getTypeElement(cls.getCanonicalName()))
                 .map(typeElement -> typeElement.asType())
                 .collect(Collectors.toSet());
+
+        this.MAP_TYPE = elements.getTypeElement(Map.class.getCanonicalName()).asType();
+    }
+
+    public boolean isMap(TypeMirror typeMirror) {
+        return typeMirror.getKind().equals(TypeKind.DECLARED)
+            && types.isSubtype(typeMirror, MAP_TYPE);
     }
 
     public boolean isSimpleType(TypeMirror typeMirror) {

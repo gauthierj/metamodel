@@ -1,4 +1,4 @@
-package com.github.gauthierj.metamodel.processor.resolver;
+package com.github.gauthierj.metamodel.processor.util;
 
 import com.github.gauthierj.metamodel.annotation.Model;
 
