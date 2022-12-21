@@ -2,6 +2,7 @@ package com.github.gauthierj.metamodel.processor.resolver;
 
 import com.github.gauthierj.metamodel.annotation.Model;
 import com.github.gauthierj.metamodel.annotation.PropertyAccessMode;
+import com.github.gauthierj.metamodel.classbuilder.StringUtils;
 import com.github.gauthierj.metamodel.generator.model.PropertyInformation;
 import com.github.gauthierj.metamodel.generator.model.StructuredPropertyInformationImpl;
 import com.github.gauthierj.metamodel.generator.model.TypeInformation;
@@ -20,21 +21,16 @@ import java.util.stream.Collectors;
 public class TypeInformationResolver {
 
     private final Elements elements;
-    private final TypeElementVisitorImpl fieldElementVistor;
-    private final TypeElementVisitorImpl getterElementVisitor;
+    private final TypeElementVisitorImpl typeElementVisitor;
     private final Map<String, MutableTypeInformation> resolvedTypeInformation = new ConcurrentHashMap<>();
 
     public TypeInformationResolver(Types types, Elements elements) {
         this.elements = elements;
-        fieldElementVistor = new TypeElementVisitorImpl(types, elements, PropertyAccessMode.FIELD);
-        getterElementVisitor = new TypeElementVisitorImpl(types, elements, PropertyAccessMode.GETTER);
+        typeElementVisitor = new TypeElementVisitorImpl(types, elements);
     }
 
     public List<TypeInformation> resolveTypeInformations(List<TypeElement> annotatedTypeElements) {
-        annotatedTypeElements.forEach(te -> resolveTypeElement(
-                te,
-                getPropertyAccessMode(te),
-                getterPattern(te)));
+        annotatedTypeElements.forEach(te -> resolveTypeElement(te));
         while (resolvedTypeInformation.values().stream()
                 .anyMatch(MutableTypeInformation::hasUnresolvedPropertyInformation)) {
             for (MutableTypeInformation value : resolvedTypeInformation.values()) {
@@ -62,60 +58,54 @@ public class TypeInformationResolver {
         }
         return Optional.of(unresolvedTypePI)
                 .map(pi -> elements.getTypeElement(pi.type()))
-                .map(te -> resolveTypeElement(te, unresolvedTypePI.propertyAccessMode(), unresolvedTypePI.getterPattern()))
+                .map(te -> resolveTypeElement(te, unresolvedTypePI.propertyAccessMode(), unresolvedTypePI.getterPattern(), unresolvedTypePI.generatedClassName()))
                 .map(ti -> (PropertyInformation) StructuredPropertyInformationImpl.of(unresolvedTypePI.name(), unresolvedTypePI.logicalName(), ti))
                 .orElseGet(() -> UnsupportedPropertyInformationImpl.of(unresolvedTypePI.name(), unresolvedTypePI.logicalName(), unresolvedTypePI.type()));
     }
 
+    private MutableTypeInformation resolveTypeElement(TypeElement typeElement) {
+        return resolveTypeElement(
+                typeElement,
+                ElementUtil.getPropertyAccesMode(typeElement),
+                ElementUtil.getGetterPattern(typeElement),
+                ElementUtil.getGeneratedClassName(typeElement)
+        );
+    }
+
     private MutableTypeInformation resolveTypeElement(TypeElement typeElement,
                                                       PropertyAccessMode propertyAccessMode,
-                                                      String getterPattern) {
+                                                      String getterPattern,
+                                                      String generatedClassName) {
 
-        MutableTypeInformation typeInformation = doResolveTypeElement(typeElement, propertyAccessMode, getterPattern);
+        MutableTypeInformation typeInformation = doResolveTypeElement(
+                typeElement,
+                propertyAccessMode,
+                getterPattern,
+                generatedClassName);
 
-        resolvedTypeInformation.put(typeInformation.fullyQualifiedName(), typeInformation);
+        resolvedTypeInformation.put(typeInformation.fullyQualifiedName() + "_" + generatedClassName, typeInformation);
 
         return typeInformation;
     }
 
     private MutableTypeInformation doResolveTypeElement(TypeElement typeElement,
                                                         PropertyAccessMode propertyAccessMode,
-                                                        String getterPattern) {
+                                                        String getterPattern,
+                                                        String generatedClassName) {
+
         String qualifiedName = typeElement.getQualifiedName().toString();
         int lastDotIndex = qualifiedName.lastIndexOf('.');
         String packageName = lastDotIndex > 0 ? qualifiedName.substring(0, lastDotIndex) : "";
         String className = lastDotIndex > 0 ? qualifiedName.substring(lastDotIndex + 1) : qualifiedName;
 
         Set<PropertyInformation> propertyInformations = typeElement.accept(
-                getTypeElementVisitor(propertyAccessMode),
-                TypeElementVisitorContext.of(resolvedTypeInformation, getterPattern));
+                typeElementVisitor,
+                TypeElementVisitorContext.of(
+                        resolvedTypeInformation,
+                        propertyAccessMode,
+                        getterPattern));
 
-        return MutableTypeInformation.of(packageName, className, propertyAccessMode).withProperties(propertyInformations);
-    }
-
-    private PropertyAccessMode getPropertyAccessMode(TypeElement typeElement) {
-        return Optional.of(typeElement)
-                .map(te -> te.getAnnotation(Model.class))
-                .map(model -> model.accessMode())
-                .orElse(Model.DEFAULT_ACCESS_MODE);
-    }
-
-    private String getterPattern(TypeElement typeElement) {
-        return Optional.of(typeElement)
-                .map(te -> te.getAnnotation(Model.class))
-                .map(model -> model.getterPattern())
-                .filter(pattern -> pattern != null && pattern.trim().length() > 0)
-                .orElse(Model.DEFAULT_GETTER_PATTERN);
-    }
-
-    private TypeElementVisitorImpl getTypeElementVisitor(PropertyAccessMode propertyAccessMode) {
-        switch (propertyAccessMode) {
-            case FIELD:
-                return fieldElementVistor;
-            case GETTER:
-                return getterElementVisitor;
-            default:
-                throw new IllegalStateException();
-        }
+        return MutableTypeInformation.of(packageName, className, generatedClassName, propertyAccessMode)
+                .withProperties(propertyInformations);
     }
 }

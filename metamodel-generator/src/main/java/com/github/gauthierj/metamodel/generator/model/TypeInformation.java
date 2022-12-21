@@ -22,6 +22,7 @@ public interface TypeInformation {
         return this.packageName().equals(typeInformation.packageName());
     }
 
+    @Value.Default
     default String generatedClassName() {
         return "_" + this.className();
     }

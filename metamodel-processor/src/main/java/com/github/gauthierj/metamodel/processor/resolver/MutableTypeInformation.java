@@ -12,22 +12,25 @@ public class MutableTypeInformation implements TypeInformation {
 
     private final String packageName;
     private final String className;
-
+    private final String generatedClassName;
     private final PropertyAccessMode propertyAccessMode;
     private final List<PropertyInformation> propertyInformations = new ArrayList<>();
 
     private MutableTypeInformation(String packageName,
                                    String className,
+                                   String generatedClassName,
                                    PropertyAccessMode propertyAccessMode) {
         this.packageName = packageName;
         this.className = className;
+        this.generatedClassName = generatedClassName;
         this.propertyAccessMode = propertyAccessMode;
     }
 
     public static MutableTypeInformation of(String packageName,
                                             String className,
+                                            String generatedClassName,
                                             PropertyAccessMode propertyAccessMode) {
-        return new MutableTypeInformation(packageName, className, propertyAccessMode);
+        return new MutableTypeInformation(packageName, className, generatedClassName, propertyAccessMode);
     }
 
     @Override
@@ -40,12 +43,13 @@ public class MutableTypeInformation implements TypeInformation {
         return className;
     }
 
-    public PropertyAccessMode propertyAccessMode() {
-        return propertyAccessMode;
-    }
     @Override
     public List<PropertyInformation> properties() {
         return List.copyOf(propertyInformations);
+    }
+
+    public PropertyAccessMode propertyAccessMode() {
+        return propertyAccessMode;
     }
 
     public boolean hasUnresolvedPropertyInformation() {

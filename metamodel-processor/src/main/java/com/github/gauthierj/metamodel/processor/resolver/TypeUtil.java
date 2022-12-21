@@ -3,7 +3,6 @@ package com.github.gauthierj.metamodel.processor.resolver;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.time.temporal.TemporalAccessor;
@@ -17,14 +16,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class TypesUtil {
+public class TypeUtil {
 
     private final Types types;
     private final Elements elements;
     private final Set<TypeMirror> TYPE_WRAPPER_TYPES;
     private final Set<TypeMirror> SIMPLE_TYPES;
 
-    public TypesUtil(Types types, Elements elements) {
+    public TypeUtil(Types types, Elements elements) {
         this.types = types;
         this.elements = elements;
 

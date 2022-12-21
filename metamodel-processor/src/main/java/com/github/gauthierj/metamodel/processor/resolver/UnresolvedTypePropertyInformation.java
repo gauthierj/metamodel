@@ -11,16 +11,20 @@ public class UnresolvedTypePropertyInformation implements PropertyInformation {
     private final PropertyAccessMode propertyAccesMode;
     private final String getterPattern;
 
+    private final String generatedClassName;
+
     private UnresolvedTypePropertyInformation(String type,
                                               String name,
                                               String logicalName,
                                               PropertyAccessMode propertyAccesMode,
-                                              String getterPattern) {
+                                              String getterPattern,
+                                              String generatedClassName) {
         this.type = type;
         this.name = name;
         this.logicalName = logicalName;
         this.propertyAccesMode = propertyAccesMode;
         this.getterPattern = getterPattern;
+        this.generatedClassName = generatedClassName;
     }
 
     public String type() {
@@ -45,12 +49,23 @@ public class UnresolvedTypePropertyInformation implements PropertyInformation {
         return getterPattern;
     }
 
+    public String generatedClassName() {
+        return generatedClassName;
+    }
+
     public static PropertyInformation of(String type,
                                          String name,
                                          String logicalName,
                                          PropertyAccessMode propertyAccessMode,
-                                         String getterPattern) {
-        return new UnresolvedTypePropertyInformation(type, name, logicalName, propertyAccessMode, getterPattern);
+                                         String getterPattern,
+                                         String generatedClassName) {
+        return new UnresolvedTypePropertyInformation(
+                type,
+                name,
+                logicalName,
+                propertyAccessMode,
+                getterPattern,
+                generatedClassName);
     }
 
     @Override

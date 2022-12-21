@@ -1,7 +1,5 @@
 package com.github.gauthierj.metamodel.processor.resolver;
 
-import com.github.gauthierj.metamodel.annotation.Model;
-import com.github.gauthierj.metamodel.annotation.Property;
 import com.github.gauthierj.metamodel.annotation.PropertyAccessMode;
 import com.github.gauthierj.metamodel.generator.model.PropertyInformation;
 import com.github.gauthierj.metamodel.generator.model.SimplePropertyInformationImpl;
@@ -10,10 +8,7 @@ import com.github.gauthierj.metamodel.generator.model.UnsupportedPropertyInforma
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -24,22 +19,21 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.github.gauthierj.metamodel.processor.resolver.ElementUtil.*;
+
 public class TypeElementVisitorImpl implements TypeElementVisitor {
 
     private final Types types;
     private final Elements elements;
     private final PropertyNameProvider propertyNameProvider;
-    private final TypesUtil typesUtil;
-    private final PropertyAccessMode propertyAccessMode;
+    private final TypeUtil typeUtil;
 
     public TypeElementVisitorImpl(Types types,
-                                  Elements elements,
-                                  PropertyAccessMode propertyAccessMode) {
+                                  Elements elements) {
         this.types = types;
         this.elements = elements;
-        this.propertyAccessMode = propertyAccessMode;
         this.propertyNameProvider = new PropertyNameProvider();
-        this.typesUtil = new TypesUtil(types, elements);
+        this.typeUtil = new TypeUtil(types, elements);
     }
 
     @Override
@@ -57,84 +51,90 @@ public class TypeElementVisitorImpl implements TypeElementVisitor {
     }
 
     @Override
-    public Set<PropertyInformation> visitVariable(VariableElement e, TypeElementVisitorContext context) {
-        if (propertyAccessMode.equals(PropertyAccessMode.FIELD) && !isIgnored(e)) {
-            return Set.of(getPropertyInformationFromActualType(
-                    typesUtil.getActualType(e.asType()),
-                    propertyNameProvider.getPropertyName(e),
-                    e.getSimpleName().toString(),
-                    getPropertyAccesMode(e),
-                    getGetterPattern(e),
+    public Set<PropertyInformation> visitVariable(VariableElement variableElement, TypeElementVisitorContext context) {
+        if (shouldVisitVariable(variableElement, context)) {
+            return Set.of(getPropertyInformation(
+                    variableElement,
+                    typeUtil.getActualType(variableElement.asType()),
+                    propertyNameProvider.getPropertyName(variableElement),
+                    variableElement.getSimpleName().toString(),
                     context));
         }
         return Set.of();
     }
 
     @Override
-    public Set<PropertyInformation> visitExecutable(ExecutableElement e, TypeElementVisitorContext context) {
-        if (propertyAccessMode.equals(PropertyAccessMode.GETTER) && !isIgnored(e) && isGetter(e, context)) {
-            return Set.of(getPropertyInformationFromActualType(
-                    typesUtil.getActualType(e.getReturnType()),
-                    propertyNameProvider.getPropertyName(e),
-                    StringUtils.getGetterPropertyName(e.getSimpleName().toString()),
-                    getPropertyAccesMode(e),
-                    getGetterPattern(e),
+    public Set<PropertyInformation> visitExecutable(ExecutableElement executableElement, TypeElementVisitorContext context) {
+        if (shouldVisitExecutable(executableElement, context)) {
+            String getterPattern = getGetterPattern(executableElement, context.getGetterPattern());
+            return Set.of(getPropertyInformation(
+                    executableElement,
+                    typeUtil.getActualType(executableElement.getReturnType()),
+                    propertyNameProvider.getPropertyName(executableElement, getterPattern),
+                    StringUtils.getGetterPropertyName(executableElement.getSimpleName().toString(), getterPattern),
                     context));
         }
         return Set.of();
     }
 
-    private PropertyInformation getPropertyInformationFromActualType(TypeMirror actualType,
-                                                                     String name,
-                                                                     String logicalName,
-                                                                     PropertyAccessMode accessMode,
-                                                                     String getterPattern,
-                                                                     TypeElementVisitorContext context) {
-        System.out.println(String.format("Property - name: %s, logicalName: %s", name, logicalName));
-        if (typesUtil.isSimpleType(actualType)) {
+    private static boolean shouldVisitVariable(VariableElement e, TypeElementVisitorContext context) {
+        return PropertyAccessMode.FIELD.equals(context.propertyAccessMode())
+                && !isIgnored(e);
+    }
+
+    private boolean shouldVisitExecutable(ExecutableElement e, TypeElementVisitorContext context) {
+        return PropertyAccessMode.GETTER.equals(context.propertyAccessMode())
+                && !isIgnored(e)
+                && isGetter(e, context.getGetterPattern());
+    }
+
+    private PropertyInformation getPropertyInformation(Element element,
+                                                       TypeMirror actualType,
+                                                       String name,
+                                                       String logicalName,
+                                                       TypeElementVisitorContext context) {
+        if (typeUtil.isSimpleType(actualType)) {
             return SimplePropertyInformationImpl.of(name, logicalName);
         }
+        return getTypeElement(actualType)
+                .map(actualTypeElement -> getPropertyInformation(element, actualTypeElement, name, logicalName, context))
+                .orElseGet(() -> UnsupportedPropertyInformationImpl.of(
+                        name,
+                        logicalName,
+                        element.getEnclosingElement().getSimpleName().toString()));
+    }
+
+    private Optional<TypeElement> getTypeElement(TypeMirror actualType) {
         return Optional.of(actualType)
                 .filter(t -> t.getKind().equals(TypeKind.DECLARED))
                 .map(t -> (DeclaredType) t)
                 .map(type -> type.asElement())
                 .filter(elm -> elm instanceof TypeElement)
-                .map(elm -> (TypeElement) elm)
-                .map(te -> Optional.ofNullable(context.getResolvedTypes().get(te.getQualifiedName().toString() + "_" + accessMode.toString()))
-                            .map(typeInformation -> (PropertyInformation) StructuredPropertyInformationImpl.of(name, logicalName, typeInformation))
-                            .orElseGet(() -> UnresolvedTypePropertyInformation.of(
-                                    te.getQualifiedName().toString(),
-                                    name,
-                                    logicalName,
-                                    accessMode, getterPattern)))
-                .orElseGet(() -> UnsupportedPropertyInformationImpl.of(name, logicalName, types.asElement(actualType).getSimpleName().toString()));
+                .map(elm -> (TypeElement) elm);
     }
 
-    private boolean isGetter(ExecutableElement e, TypeElementVisitorContext context) {
-        return e.getParameters().isEmpty() // No params
-                && e.getModifiers().contains(Modifier.PUBLIC) // Public method
-                && !e.getReturnType().getKind().equals(TypeKind.VOID) // Does not return void
-                && e.getSimpleName().toString().matches(context.getGetterPattern()); // Matches provided pattern;
-    }
+    private PropertyInformation getPropertyInformation(Element element,
+                                                       TypeElement actualTypeElement,
+                                                       String name,
+                                                       String logicalName,
+                                                       TypeElementVisitorContext context) {
 
-    private PropertyAccessMode getPropertyAccesMode(Element e) {
-        return Optional.of(e)
-                .map(elm -> elm.getAnnotation(Model.class))
-                .map(model -> model.accessMode())
-                .orElse(Model.DEFAULT_ACCESS_MODE);
-    }
+        PropertyAccessMode propertyAccesMode = getPropertyAccesMode(element, context.propertyAccessMode());
+        String getterPattern = getGetterPattern(element, context.getGetterPattern());
+        String generatedClassName = getGeneratedClassName(element, actualTypeElement);
 
-    private String getGetterPattern(Element e) {
-        return Optional.of(e)
-                .map(elm -> elm.getAnnotation(Model.class))
-                .map(model -> model.getterPattern())
-                .orElse(Model.DEFAULT_GETTER_PATTERN);
-    }
-
-    private boolean isIgnored(Element e) {
-        return Optional.of(e)
-                .map(elm -> elm.getAnnotation(Property.class))
-                .map(property -> property.ignore())
-                .orElse(false);
+        return Optional.of(context.getResolvedTypes())
+                .map(resolvedTypes -> resolvedTypes.get(actualTypeElement.getQualifiedName() + "_" + generatedClassName))
+                .map(resolvedType -> (PropertyInformation) StructuredPropertyInformationImpl.of(
+                        name,
+                        logicalName,
+                        resolvedType))
+                .orElseGet(() -> UnresolvedTypePropertyInformation.of(
+                        actualTypeElement.getQualifiedName().toString(),
+                        name,
+                        logicalName,
+                        propertyAccesMode,
+                        getterPattern,
+                        generatedClassName));
     }
 }

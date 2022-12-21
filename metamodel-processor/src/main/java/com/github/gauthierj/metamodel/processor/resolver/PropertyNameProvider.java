@@ -27,7 +27,7 @@ public class PropertyNameProvider {
         return element.getSimpleName().toString();
     }
 
-    public String getPropertyName(ExecutableElement element) {
+    public String getPropertyName(ExecutableElement element, String getterPattern) {
         for (PropertyNameResolver resolver : resolvers) {
             System.out.println("Resolver: " + resolver.getClass().getCanonicalName());
             Optional<String> resolve = resolver.resolve(element);
@@ -35,6 +35,6 @@ public class PropertyNameProvider {
                 return resolve.get();
             }
         }
-        return StringUtils.getGetterPropertyName(element.getSimpleName().toString());
+        return StringUtils.getGetterPropertyName(element.getSimpleName().toString(), getterPattern);
     }
 }
