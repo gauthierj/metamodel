@@ -12,6 +12,10 @@ public class _Model {
         return _rootPath.with(property).toString();
     }
 
+    public _Path _propertyPath(String property) {
+        return _rootPath.with(property);
+    }
+
     public _Path _rootPath() {
         return _rootPath;
     }
