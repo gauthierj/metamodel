@@ -29,8 +29,7 @@ public class GeneratedClassWriter {
             try(Writer fileWriter = filer.createSourceFile(typeInformation.fullyQualifiedGeneratedClassName()).openWriter()) {
                 fileWriter.write(content);
             } catch (IOException e) {
-                messager.printMessage(Diagnostic.Kind.ERROR, "Could not write generated files");
-                e.printStackTrace();
+                throw new IllegalStateException("Could not write source file", e);
             }
         }
     }

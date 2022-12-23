@@ -3,7 +3,7 @@ package com.github.gauthierj.metamodel.integration.test;
 import com.github.gauthierj.metamodel.integration.test.model._SimpleModelByGetter;
 import org.junit.jupiter.api.Assertions;
 
-public class Test {
+public class SimpleModelTest {
 
     @org.junit.jupiter.api.Test
     public void test_SimpleModelByGetter() {
