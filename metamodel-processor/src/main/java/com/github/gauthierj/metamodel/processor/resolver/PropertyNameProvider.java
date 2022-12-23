@@ -28,7 +28,6 @@ public class PropertyNameProvider {
 
     public String getPropertyName(ExecutableElement element, String getterPattern) {
         for (PropertyNameResolver resolver : resolvers) {
-            System.out.println("Resolver: " + resolver.getClass().getCanonicalName());
             Optional<String> resolve = resolver.resolve(element);
             if(resolve.isPresent()) {
                 return resolve.get();

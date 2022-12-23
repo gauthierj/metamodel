@@ -1,8 +1,8 @@
 package com.github.gauthierj.metamodel.generator;
 
+import com.github.gauthierj.metamodel.classbuilder.ClassBuilder;
 import com.github.gauthierj.metamodel.generator.model.PropertyInformation;
 import com.github.gauthierj.metamodel.generator.model.TypeInformation;
-import com.github.gauthierj.metamodel.classbuilder.ClassBuilder;
 
 public interface PropertyInformationHandler {
 

@@ -1,14 +1,14 @@
 package com.github.gauthierj.metamodel.generator;
 
-import com.github.gauthierj.metamodel.generator.model.TypeInformation;
 import com.github.gauthierj.metamodel.classbuilder.ClassBuilder;
+import com.github.gauthierj.metamodel.generator.model.TypeInformation;
 import com.github.gauthierj.metamodel.model._Model;
 import com.github.gauthierj.metamodel.model._Path;
 
 import javax.annotation.processing.Messager;
 import java.util.List;
 
-import static com.github.gauthierj.metamodel.classbuilder.Modifier.*;
+import static com.github.gauthierj.metamodel.classbuilder.Modifier.PUBLIC;
 
 public class MetamodelGeneratorImpl implements MetamodelGenerator {
 

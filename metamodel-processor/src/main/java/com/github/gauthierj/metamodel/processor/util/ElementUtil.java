@@ -64,10 +64,10 @@ public final class ElementUtil {
     }
 
     public static boolean isGetter(ExecutableElement e, String getterPattern) {
-        return e.getParameters().isEmpty() // No params
-                && e.getModifiers().contains(Modifier.PUBLIC) // Public method
-                && !e.getReturnType().getKind().equals(TypeKind.VOID) // Does not return void
-                && e.getSimpleName().toString().matches(getterPattern); // Matches provided pattern;
+        return e.getParameters().isEmpty()
+                && e.getModifiers().contains(Modifier.PUBLIC)
+                && !e.getReturnType().getKind().equals(TypeKind.VOID)
+                && e.getSimpleName().toString().matches(getterPattern);
     }
 }
 

@@ -12,14 +12,14 @@ public enum Modifier {
     SYNCHRONIZED("synchronized"),
     VOLATILE("volatile");
 
-    private final String modifier;
+    private final String representation;
 
-    Modifier(String modifier) {
-        this.modifier = modifier;
+    Modifier(String representation) {
+        this.representation = representation;
     }
 
     @Override
     public String toString() {
-        return modifier;
+        return representation;
     }
 }

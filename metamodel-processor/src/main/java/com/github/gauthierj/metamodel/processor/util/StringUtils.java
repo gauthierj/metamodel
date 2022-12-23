@@ -1,7 +1,5 @@
 package com.github.gauthierj.metamodel.processor.util;
 
-import com.github.gauthierj.metamodel.annotation.Model;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -39,14 +39,13 @@ public class MethodSignatureBuilderImpl<T extends _ClassBuilder<T>> implements M
 
     @Override
     public MethodBodyBuilder<T> body() {
-        String parameters = getParametersString();
+        String parametersString = getParametersString();
         Optional.of(modifiers)
                 .filter(mods -> !mods.isEmpty())
                 .ifPresent(mods -> methodWriter.write(StringUtils.toString(mods, " ") + " "));
-        ;
         Optional.ofNullable(returnTypeOpt).ifPresent(returnType -> methodWriter.write(returnType + " "));
         methodWriter.write(methodName + "(");
-        methodWriter.write(parameters);
+        methodWriter.write(parametersString);
         methodWriter.writeln_r(") {");
         PicoWriter methodBodyWriter = methodWriter.createDeferredWriter();
         methodWriter.writeln_l("}");

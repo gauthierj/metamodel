@@ -33,14 +33,12 @@ public class TypeElementVisitorImpl implements TypeElementVisitor {
             _Model.class.getSimpleName());
 
     private final Types types;
-    private final Elements elements;
     private final PropertyNameProvider propertyNameProvider;
     private final TypeUtil typeUtil;
 
     public TypeElementVisitorImpl(Types types,
                                   Elements elements) {
         this.types = types;
-        this.elements = elements;
         this.propertyNameProvider = new PropertyNameProvider();
         this.typeUtil = new TypeUtil(types, elements);
     }
@@ -53,7 +51,7 @@ public class TypeElementVisitorImpl implements TypeElementVisitor {
                 .filter(elm -> !((TypeElement) elm).getQualifiedName().contentEquals(Object.class.getCanonicalName()))
                 .ifPresent(typeElement -> propertyInformations.addAll(typeElement.accept(this, context)));
         e.getInterfaces().stream()
-                .map(tm -> types.asElement(tm))
+                .map(types::asElement)
                 .forEach(elm -> propertyInformations.addAll(elm.accept(this, context)));
         e.getEnclosedElements().forEach(elm -> propertyInformations.addAll(elm.accept(this, context)));
         return propertyInformations;

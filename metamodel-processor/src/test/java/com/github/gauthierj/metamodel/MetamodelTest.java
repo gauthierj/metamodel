@@ -21,8 +21,8 @@ class MetamodelTest {
                 .compile(JavaFileObjects.forResource("com/github/gauthierj/metamodel/processor/model/SimpleModel.java"),
                         JavaFileObjects.forResource("com/github/gauthierj/metamodel/processor/model/SimpleModelByField.java"));
 
-        Assertions.assertEquals(compile.status(), Compilation.Status.SUCCESS);
-        Assertions.assertEquals(compile.generatedSourceFiles().size(), 1);
+        Assertions.assertEquals(Compilation.Status.SUCCESS, compile.status());
+        Assertions.assertEquals(1, compile.generatedSourceFiles().size());
 
         Optional<JavaFileObject> javaFileObject = compile.generatedSourceFile("com.github.gauthierj.metamodel.processor.model._SimpleModelByField");
         String simpleModelByField = javaFileObject.orElseThrow().getCharContent(true).toString();
@@ -35,8 +35,6 @@ class MetamodelTest {
         Assertions.assertTrue(hasSimpleProprety(simpleModelByField, "aStringArray"));
         Assertions.assertTrue(hasSimpleProprety(simpleModelByField, "aStringProperty"));
         Assertions.assertTrue(hasSimpleProprety(simpleModelByField, "aPropertyWithADifferentName", "someDifferentName"));
-
-        System.out.println(compile);
     }
 
     @Test
@@ -46,8 +44,8 @@ class MetamodelTest {
                 .compile(JavaFileObjects.forResource("com/github/gauthierj/metamodel/processor/model/SimpleModel.java"),
                         JavaFileObjects.forResource("com/github/gauthierj/metamodel/processor/model/SimpleModelByGetter.java"));
 
-        Assertions.assertEquals(compile.status(), Compilation.Status.SUCCESS);
-        Assertions.assertEquals(compile.generatedSourceFiles().size(), 1);
+        Assertions.assertEquals(Compilation.Status.SUCCESS, compile.status());
+        Assertions.assertEquals(1, compile.generatedSourceFiles().size());
 
         Optional<JavaFileObject> javaFileObject = compile.generatedSourceFile("com.github.gauthierj.metamodel.processor.model._SimpleModelByGetter");
         String simpleModelByField = javaFileObject.orElseThrow().getCharContent(true).toString();
@@ -60,8 +58,6 @@ class MetamodelTest {
         Assertions.assertTrue(hasSimpleProprety(simpleModelByField, "aStringArray"));
         Assertions.assertTrue(hasSimpleProprety(simpleModelByField, "aStringProperty"));
         Assertions.assertTrue(hasSimpleProprety(simpleModelByField, "aPropertyWithAnotherName", "someDifferentName"));
-
-        System.out.println(compile);
     }
 
     @Test
@@ -72,8 +68,8 @@ class MetamodelTest {
                         JavaFileObjects.forResource("com/github/gauthierj/metamodel/processor/model/ComplexModel.java"),
                         JavaFileObjects.forResource("com/github/gauthierj/metamodel/processor/model/ComplexModelByGetter.java"));
 
-        Assertions.assertEquals(compile.status(), Compilation.Status.SUCCESS);
-        Assertions.assertEquals(compile.generatedSourceFiles().size(), 2);
+        Assertions.assertEquals(Compilation.Status.SUCCESS, compile.status());
+        Assertions.assertEquals(2, compile.generatedSourceFiles().size());
 
         Optional<JavaFileObject> javaFileObject = compile.generatedSourceFile("com.github.gauthierj.metamodel.processor.model._ComplexModelByGetter");
         String simpleModelByField = javaFileObject.orElseThrow().getCharContent(true).toString();

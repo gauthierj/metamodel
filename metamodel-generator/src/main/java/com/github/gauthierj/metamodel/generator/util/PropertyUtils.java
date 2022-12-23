@@ -1,7 +1,5 @@
 package com.github.gauthierj.metamodel.generator.util;
 
-import com.github.gauthierj.metamodel.generator.util.StringUtils;
-
 public final class PropertyUtils {
 
     private PropertyUtils() {

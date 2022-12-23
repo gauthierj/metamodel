@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 public class TypeUtil {
 
     private final Types types;
-    private final Elements elements;
     private final Set<TypeMirror> TYPE_WRAPPER_TYPES;
     private final Set<TypeMirror> SIMPLE_TYPES;
 
@@ -29,7 +28,6 @@ public class TypeUtil {
 
     public TypeUtil(Types types, Elements elements) {
         this.types = types;
-        this.elements = elements;
 
         this.TYPE_WRAPPER_TYPES = Stream.of(
                         Optional.class,
@@ -98,12 +96,6 @@ public class TypeUtil {
         return declaredType.getTypeArguments().get(0);
     }
 
-    private boolean isTypeWrapper(DeclaredType declaredType) {
-        return isSubTypeOfTypeWrapper(declaredType)
-                && Optional.ofNullable(declaredType.getTypeArguments())
-                .map(tms -> tms.size() == 1)
-                .orElse(false);
-    }
     private boolean isSubTypeOfTypeWrapper(DeclaredType declaredType) {
         return TYPE_WRAPPER_TYPES.stream().anyMatch(typeWrapper -> types.isSubtype(types.erasure(declaredType), typeWrapper));
     }

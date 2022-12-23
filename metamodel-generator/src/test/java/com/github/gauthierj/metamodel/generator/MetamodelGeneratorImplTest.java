@@ -2,7 +2,6 @@ package com.github.gauthierj.metamodel.generator;
 
 import com.github.gauthierj.metamodel.generator.model.SimplePropertyInformationImpl;
 import com.github.gauthierj.metamodel.generator.model.StructuredPropertyInformationImpl;
-import com.github.gauthierj.metamodel.generator.model.TypeInformation;
 import com.github.gauthierj.metamodel.generator.model.TypeInformationImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,8 +9,6 @@ import org.mockito.Mockito;
 
 import javax.annotation.processing.Messager;
 import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MetamodelGeneratorImplTest {
 

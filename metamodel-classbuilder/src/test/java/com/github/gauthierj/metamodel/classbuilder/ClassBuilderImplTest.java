@@ -5,10 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import static com.github.gauthierj.metamodel.classbuilder.Modifier.*;
-import static com.github.gauthierj.metamodel.classbuilder.Modifier.PUBLIC;
 
 class ClassBuilderImplTest {
 

@@ -7,7 +7,6 @@ import com.github.gauthierj.metamodel.generator.model.TypeInformation;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;

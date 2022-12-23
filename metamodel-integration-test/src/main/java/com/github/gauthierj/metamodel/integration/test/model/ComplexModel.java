@@ -1,7 +1,6 @@
 package com.github.gauthierj.metamodel.integration.test.model;
 
 import com.github.gauthierj.metamodel.annotation.Model;
-import com.github.gauthierj.metamodel.annotation.PropertyAccessMode;
 
 @Model
 public class ComplexModel {
