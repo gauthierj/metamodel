@@ -54,12 +54,12 @@ public class TypeUtil {
                 .map(Element::asType)
                 .collect(Collectors.toSet());
 
-        this.mapType = elements.getTypeElement(Map.class.getCanonicalName()).asType();
+        this.mapType = types.erasure(elements.getTypeElement(Map.class.getCanonicalName()).asType());
     }
 
     public boolean isMap(TypeMirror typeMirror) {
         return typeMirror.getKind().equals(TypeKind.DECLARED)
-            && types.isSubtype(typeMirror, mapType);
+            && types.isSubtype(types.erasure(typeMirror), mapType);
     }
 
     public boolean isSimpleType(TypeMirror typeMirror) {

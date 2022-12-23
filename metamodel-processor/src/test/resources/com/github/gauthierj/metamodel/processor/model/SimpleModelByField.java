@@ -5,6 +5,7 @@ import com.github.gauthierj.metamodel.annotation.Property;
 import com.github.gauthierj.metamodel.annotation.PropertyAccessMode;
 
 import java.util.List;
+import java.util.Map;
 
 @Model(accessMode = PropertyAccessMode.FIELD)
 public class SimpleModelByField extends SimpleModel {
@@ -17,7 +18,8 @@ public class SimpleModelByField extends SimpleModel {
                               boolean aPrimitiveBooleanProperty,
                               Boolean aBooleanProperty,
                               List<String> aStringListProperty,
-                              String [] aStringArray) {
-        super(aStringProperty, anIntProperty, aPrimitiveBooleanProperty, aBooleanProperty, aStringListProperty, aStringArray);
+                              String [] aStringArray,
+                              Map<String, Object> aMapProperty) {
+        super(aStringProperty, anIntProperty, aPrimitiveBooleanProperty, aBooleanProperty, aStringListProperty, aStringArray, aMapProperty);
     }
 }

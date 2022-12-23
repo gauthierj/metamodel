@@ -1,6 +1,10 @@
 package com.github.gauthierj.metamodel.processor.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class SimpleModel {
 
@@ -11,18 +15,22 @@ public class SimpleModel {
     private final List<String> aStringListProperty;
     private final String[] aStringArray;
 
+    private final Map<String, Object> aMapProperty = new HashMap<>();
+
     public SimpleModel(String aStringProperty,
                        int anIntProperty,
                        boolean aPrimitiveBooleanProperty,
                        Boolean aBooleanProperty,
                        List<String> aStringListProperty,
-                       String[] aStringArray) {
+                       String[] aStringArray,
+                       Map<String, Object> aMapProperty) {
         this.aStringProperty = aStringProperty;
         this.anIntProperty = anIntProperty;
         this.aPrimitiveBooleanProperty = aPrimitiveBooleanProperty;
         this.aBooleanProperty = aBooleanProperty;
         this.aStringListProperty = aStringListProperty;
         this.aStringArray = aStringArray;
+        Optional.ofNullable(aMapProperty).ifPresent(this.aMapProperty::putAll);
     }
 
     public String getAStringProperty() {
@@ -47,5 +55,9 @@ public class SimpleModel {
 
     public String[] getAStringArray() {
         return aStringArray;
+    }
+
+    public Map<String, Object> getAMapProperty() {
+        return Map.copyOf(aMapProperty);
     }
 }

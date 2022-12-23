@@ -30,7 +30,8 @@ public class TypeElementVisitorImpl implements TypeElementVisitor {
 
     private static final TypeInformation _MODEL_TYPE_INFORMATION = TypeInformationImpl.of(
             _Model.class.getPackageName(),
-            _Model.class.getSimpleName());
+            _Model.class.getSimpleName())
+            .withGeneratedClassName(_Model.class.getSimpleName());
 
     private final Types types;
     private final PropertyNameProvider propertyNameProvider;
