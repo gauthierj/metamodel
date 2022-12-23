@@ -75,9 +75,9 @@ public class _ClassBuilderImpl<T extends _ClassBuilder<T>> implements _ClassBuil
     @SuppressWarnings("unchecked")
     public MethodSignatureBuilder<T> constructor(Collection<Modifier> modifiers) {
         if(hasMember()) {
-            this.methodWriter.writeln("");
+            this.constructorWriter.writeln("");
         }
-        return new MethodSignatureBuilderImpl<>((T) this, methodWriter.createDeferredWriter(), modifiers, null, className);
+        return new MethodSignatureBuilderImpl<>((T) this, constructorWriter.createDeferredWriter(), modifiers, null, className);
     }
 
     @Override

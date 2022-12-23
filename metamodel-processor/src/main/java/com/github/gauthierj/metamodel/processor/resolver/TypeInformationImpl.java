@@ -48,6 +48,11 @@ public class TypeInformationImpl implements TypeInformation {
         return List.copyOf(propertyInformations);
     }
 
+    @Override
+    public String generatedClassName() {
+        return generatedClassName;
+    }
+
     public PropertyAccessMode propertyAccessMode() {
         return propertyAccessMode;
     }

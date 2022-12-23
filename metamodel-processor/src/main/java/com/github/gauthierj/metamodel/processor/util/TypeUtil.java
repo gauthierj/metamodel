@@ -21,15 +21,14 @@ import java.util.stream.Stream;
 public class TypeUtil {
 
     private final Types types;
-    private final Set<TypeMirror> TYPE_WRAPPER_TYPES;
-    private final Set<TypeMirror> SIMPLE_TYPES;
-
-    private final TypeMirror MAP_TYPE;
+    private final Set<TypeMirror> typeWrapperTypes;
+    private final Set<TypeMirror> simpleTypes;
+    private final TypeMirror mapType;
 
     public TypeUtil(Types types, Elements elements) {
         this.types = types;
 
-        this.TYPE_WRAPPER_TYPES = Stream.of(
+        this.typeWrapperTypes = Stream.of(
                         Optional.class,
                         OptionalDouble.class,
                         OptionalInt.class,
@@ -40,7 +39,7 @@ public class TypeUtil {
                 .map(typeMirror -> types.erasure(typeMirror))
                 .collect(Collectors.toSet());
 
-        this.SIMPLE_TYPES = Stream.of(
+        this.simpleTypes = Stream.of(
                         String.class,
                         Number.class,
                         Boolean.class,
@@ -54,12 +53,12 @@ public class TypeUtil {
                 .map(typeElement -> typeElement.asType())
                 .collect(Collectors.toSet());
 
-        this.MAP_TYPE = elements.getTypeElement(Map.class.getCanonicalName()).asType();
+        this.mapType = elements.getTypeElement(Map.class.getCanonicalName()).asType();
     }
 
     public boolean isMap(TypeMirror typeMirror) {
         return typeMirror.getKind().equals(TypeKind.DECLARED)
-            && types.isSubtype(typeMirror, MAP_TYPE);
+            && types.isSubtype(typeMirror, mapType);
     }
 
     public boolean isSimpleType(TypeMirror typeMirror) {
@@ -88,7 +87,7 @@ public class TypeUtil {
     }
 
     private boolean isSubTypeOfSimpleType(DeclaredType declaredType) {
-        return SIMPLE_TYPES.stream()
+        return simpleTypes.stream()
                 .anyMatch(simpleType -> types.isSubtype(declaredType, simpleType));
     }
 
@@ -97,6 +96,6 @@ public class TypeUtil {
     }
 
     private boolean isSubTypeOfTypeWrapper(DeclaredType declaredType) {
-        return TYPE_WRAPPER_TYPES.stream().anyMatch(typeWrapper -> types.isSubtype(types.erasure(declaredType), typeWrapper));
+        return typeWrapperTypes.stream().anyMatch(typeWrapper -> types.isSubtype(types.erasure(declaredType), typeWrapper));
     }
 }
