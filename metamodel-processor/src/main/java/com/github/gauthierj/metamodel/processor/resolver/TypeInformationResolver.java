@@ -29,7 +29,7 @@ public class TypeInformationResolver {
     }
 
     public List<TypeInformation> resolveTypeInformations(List<TypeElement> annotatedTypeElements) {
-        annotatedTypeElements.forEach(te -> resolveTypeElement(te));
+        annotatedTypeElements.forEach(this::resolveTypeElement);
         while (resolvedTypeInformation.values().stream()
                 .anyMatch(TypeInformationImpl::hasUnresolvedPropertyInformation)) {
             for (TypeInformationImpl value : resolvedTypeInformation.values()) {

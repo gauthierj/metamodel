@@ -11,7 +11,7 @@ public class PropertyAnnotationPropertyNameResolver implements PropertyNameResol
     public Optional<String> resolve(VariableElement element) {
         return Optional.ofNullable(element)
                 .map(elm -> elm.getAnnotation(Property.class))
-                .map(property -> property.name())
+                .map(Property::name)
                 .filter(name -> name != null && name.trim().length() > 0);
     }
 
@@ -19,7 +19,7 @@ public class PropertyAnnotationPropertyNameResolver implements PropertyNameResol
     public Optional<String> resolve(ExecutableElement element) {
         return Optional.ofNullable(element)
                 .map(elm -> elm.getAnnotation(Property.class))
-                .map(property -> property.name())
+                .map(Property::name)
                 .filter(name -> name != null && name.trim().length() > 0);
     }
 }

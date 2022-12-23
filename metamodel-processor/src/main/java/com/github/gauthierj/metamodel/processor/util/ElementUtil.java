@@ -25,7 +25,7 @@ public final class ElementUtil {
     public static PropertyAccessMode getPropertyAccesMode(Element e, PropertyAccessMode defaultValue) {
         return Optional.of(e)
                 .map(elm -> elm.getAnnotation(Model.class))
-                .map(model -> model.accessMode())
+                .map(Model::accessMode)
                 .orElse(defaultValue);
     }
 
@@ -36,30 +36,30 @@ public final class ElementUtil {
     public static String getGetterPattern(Element e, String defaultValue) {
         return Optional.of(e)
                 .map(elm -> elm.getAnnotation(Model.class))
-                .map(model -> model.getterPattern())
+                .map(Model::getterPattern)
                 .orElse(defaultValue);
     }
 
     public static boolean isIgnored(Element e) {
         return Optional.of(e)
                 .map(elm -> elm.getAnnotation(Property.class))
-                .map(property -> property.ignore())
+                .map(Property::ignore)
                 .orElse(false);
     }
 
     public static String getGeneratedClassName(TypeElement te) {
         return Optional.of(te)
                 .map(elm -> elm.getAnnotation(Model.class))
-                .map(model -> model.generatedClassName())
-                .filter(generatedClassName -> StringUtils.isNotBlank(generatedClassName))
+                .map(Model::generatedClassName)
+                .filter(StringUtils::isNotBlank)
                 .orElseGet(() -> "_" + te.getSimpleName());
     }
 
     public static String getGeneratedClassName(Element e, TypeElement te) {
         return Optional.of(e)
                 .map(elm -> elm.getAnnotation(Model.class))
-                .map(model -> model.generatedClassName())
-                .filter(generatedClassName -> StringUtils.isNotBlank(generatedClassName))
+                .map(Model::generatedClassName)
+                .filter(StringUtils::isNotBlank)
                 .orElseGet(() -> "_" + te.getSimpleName());
     }
 

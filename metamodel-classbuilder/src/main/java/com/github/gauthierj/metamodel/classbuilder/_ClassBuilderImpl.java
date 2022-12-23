@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNullElse;
 
-public class _ClassBuilderImpl<T extends _ClassBuilder<T>> implements _ClassBuilder<T> {
+public abstract class _ClassBuilderImpl<T extends _ClassBuilder<T>> implements _ClassBuilder<T> {
 
     private boolean hasField = false;
     private boolean hasMember = false;

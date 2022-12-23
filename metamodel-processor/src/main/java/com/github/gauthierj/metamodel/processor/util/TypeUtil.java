@@ -1,5 +1,6 @@
 package com.github.gauthierj.metamodel.processor.util;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
@@ -35,8 +36,8 @@ public class TypeUtil {
                         OptionalLong.class,
                         Collection.class)
                 .map(cls -> elements.getTypeElement(cls.getCanonicalName()))
-                .map(typeElement -> typeElement.asType())
-                .map(typeMirror -> types.erasure(typeMirror))
+                .map(Element::asType)
+                .map(types::erasure)
                 .collect(Collectors.toSet());
 
         this.simpleTypes = Stream.of(
@@ -50,7 +51,7 @@ public class TypeUtil {
                         Date.class,
                         java.sql.Date.class)
                 .map(cls -> elements.getTypeElement(cls.getCanonicalName()))
-                .map(typeElement -> typeElement.asType())
+                .map(Element::asType)
                 .collect(Collectors.toSet());
 
         this.mapType = elements.getTypeElement(Map.class.getCanonicalName()).asType();

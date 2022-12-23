@@ -25,8 +25,8 @@ public class ModelProcessor extends AbstractProcessor {
                 .filter(annotation -> annotation.getQualifiedName().contentEquals(Model.class.getCanonicalName()))
                 .map(roundEnv::getElementsAnnotatedWith)
                 .flatMap(Collection::stream)
-                .filter(element -> element instanceof TypeElement)
-                .map(element -> (TypeElement) element)
+                .filter(TypeElement.class::isInstance)
+                .map(TypeElement.class::cast)
                 .collect(Collectors.toList());
 
         List<TypeInformation> typeInformations = new TypeInformationResolver(

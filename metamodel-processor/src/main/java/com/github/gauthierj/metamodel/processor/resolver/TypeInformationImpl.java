@@ -59,7 +59,7 @@ public class TypeInformationImpl implements TypeInformation {
 
     public boolean hasUnresolvedPropertyInformation() {
         return propertyInformations.stream()
-                .anyMatch(propertyInformation -> propertyInformation instanceof UnresolvedTypePropertyInformation);
+                .anyMatch(UnresolvedTypePropertyInformation.class::isInstance);
     }
 
     public TypeInformationImpl withProperties(Collection<PropertyInformation> properties) {

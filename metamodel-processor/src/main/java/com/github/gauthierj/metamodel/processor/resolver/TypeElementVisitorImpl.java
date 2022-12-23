@@ -120,10 +120,10 @@ public class TypeElementVisitorImpl implements TypeElementVisitor {
     private Optional<TypeElement> getTypeElement(TypeMirror actualType) {
         return Optional.of(actualType)
                 .filter(t -> t.getKind().equals(TypeKind.DECLARED))
-                .map(t -> (DeclaredType) t)
-                .map(type -> type.asElement())
-                .filter(elm -> elm instanceof TypeElement)
-                .map(elm -> (TypeElement) elm);
+                .map(DeclaredType.class::cast)
+                .map(DeclaredType::asElement)
+                .filter(TypeElement.class::isInstance)
+                .map(TypeElement.class::cast);
     }
 
     private PropertyInformation getPropertyInformation(Element element,
