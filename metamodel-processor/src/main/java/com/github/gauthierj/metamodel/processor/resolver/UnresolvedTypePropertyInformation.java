@@ -68,6 +68,7 @@ public class UnresolvedTypePropertyInformation implements PropertyInformation {
                 generatedClassName);
     }
 
+    // BEGIN GENERATED
     @Override
     public String toString() {
         return "UnresolvedTypePropertyInformation{" +
@@ -95,4 +96,5 @@ public class UnresolvedTypePropertyInformation implements PropertyInformation {
         result = 31 * result + name.hashCode();
         return result;
     }
+    // END GENERATED
 }

@@ -23,6 +23,7 @@ public class TypeInformationKey {
         return generatedClassName;
     }
 
+    // BEGIN GENERATED
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,4 +43,5 @@ public class TypeInformationKey {
         result = 31 * result + generatedClassName.hashCode();
         return result;
     }
+    // END GENERATED
 }
