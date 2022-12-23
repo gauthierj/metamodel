@@ -1,3 +1,5 @@
+![Build](https://github.com/gauthierj/metamodel/actions/workflows/maven.yml/badge.svg)
+
 # Metamodel
 
 A simple metamodel generator for java classes.
