@@ -6,7 +6,6 @@ import com.github.gauthierj.metamodel.generator.model.TypeInformation;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
-import javax.tools.Diagnostic;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
@@ -14,12 +13,10 @@ import java.util.List;
 public class GeneratedClassWriter {
 
     private final Filer filer;
-    private final Messager messager;
     private final MetamodelGenerator metamodelGenerator;
 
     public GeneratedClassWriter(Filer filer, Messager messager) {
         this.filer = filer;
-        this.messager = messager;
         this.metamodelGenerator = new MetamodelGeneratorImpl(messager);
     }
 

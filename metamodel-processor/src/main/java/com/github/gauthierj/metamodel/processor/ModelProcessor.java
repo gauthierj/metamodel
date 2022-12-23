@@ -2,7 +2,6 @@ package com.github.gauthierj.metamodel.processor;
 
 import com.github.gauthierj.metamodel.annotation.Model;
 import com.github.gauthierj.metamodel.generator.model.TypeInformation;
-import com.github.gauthierj.metamodel.processor.resolver.PropertyNameResolver;
 import com.github.gauthierj.metamodel.processor.resolver.TypeInformationResolver;
 import com.github.gauthierj.metamodel.processor.writer.GeneratedClassWriter;
 
@@ -11,7 +10,6 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
