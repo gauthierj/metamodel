@@ -64,7 +64,7 @@ It generates a metamodel class `_SimpleClass` that gives a structural way to acc
 public class SomeUtilClass {
     
     public void addCriteriaOnSomeProperty(int value) {
-        addCriteria(_SimpleClass.mode().someProperty(), value);
+        addCriteria(_SimpleClass.model().someProperty(), value);
     }
 }
 ```
