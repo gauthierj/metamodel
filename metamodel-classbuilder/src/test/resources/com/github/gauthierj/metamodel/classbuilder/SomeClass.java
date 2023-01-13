@@ -1,5 +1,8 @@
 package com.somepackage;
 
+import com.some.otherpackage.SomeOtherclass;
+import com.some.otherpackage.Anotherclass;
+
 public class SomeClass {
 
     private final String aStringField;
