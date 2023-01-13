@@ -1,6 +1,5 @@
 package com.github.gauthierj.metamodel.processor;
 
-import com.github.gauthierj.metamodel.annotation.Model;
 import com.github.gauthierj.metamodel.generator.model.TypeInformation;
 import com.github.gauthierj.metamodel.processor.resolver.TypeInformationResolver;
 import com.github.gauthierj.metamodel.processor.writer.GeneratedClassWriter;
