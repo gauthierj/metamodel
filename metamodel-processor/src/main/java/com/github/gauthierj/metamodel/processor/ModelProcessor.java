@@ -24,7 +24,7 @@ public class ModelProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
         List<TypeElement> annotatedTypeElements = annotations.stream()
-                .filter(annotation -> annotation.getQualifiedName().contentEquals(Model.class.getCanonicalName()))
+                .filter(annotation -> getSupportedAnnotationTypes().contains(annotation.getQualifiedName().toString()))
                 .map(roundEnv::getElementsAnnotatedWith)
                 .flatMap(Collection::stream)
                 .filter(TypeElement.class::isInstance)
@@ -54,6 +54,6 @@ public class ModelProcessor extends AbstractProcessor {
         for (ModelAnnotationProvider modelAnnotationProvider : modelAnnotationProviders) {
             result.addAll(modelAnnotationProvider.getModelAnnotations());
         }
-        return super.getSupportedAnnotationTypes();
+        return result;
     }
 }

@@ -34,9 +34,9 @@
 
     <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>GitHub gauthierj Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/gauthierj/metamodel</url>
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${staging.m2.repo}</url>
         </repository>
     </distributionManagement>
 
@@ -46,6 +46,7 @@
         <module>metamodel-generator</module>
         <module>metamodel-integration-test</module>
         <module>metamodel-model</module>
+        <module>metamodel-mongo-extension</module>
         <module>metamodel-processor</module>
     </modules>
 
@@ -54,6 +55,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <staging.m2.repo>${project.build.directory}/mvn-repo</staging.m2.repo>
     </properties>
 
     <dependencyManagement>
@@ -80,6 +82,11 @@
             </dependency>
             <dependency>
                 <groupId>com.github.gauthierj</groupId>
+                <artifactId>metamodel-mongo-extension</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.gauthierj</groupId>
                 <artifactId>metamodel-processor</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -96,6 +103,42 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <altDeploymentRepository>internal.repo::default::file://${staging.m2.repo}</altDeploymentRepository>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.12</version>
+                <executions>
+                    <execution>
+                        <id>github-deploy</id>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                        <configuration>
+                            <server>github</server>
+                            <repositoryOwner>gauthierj</repositoryOwner>    <!-- github username  -->
+                            <repositoryName>metamodel</repositoryName>      <!-- github repo name -->
+                            <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                            <merge>true</merge>
+                            <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+                            <outputDirectory>${staging.m2.repo}</outputDirectory> <!-- matches distribution management repository url above -->
+                            <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
