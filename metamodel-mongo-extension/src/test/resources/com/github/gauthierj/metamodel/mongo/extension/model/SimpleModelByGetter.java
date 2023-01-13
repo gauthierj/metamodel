@@ -1,15 +1,13 @@
 package com.github.gauthierj.metamodel.mongo.extension.model;
 
 import com.github.gauthierj.metamodel.annotation.Model;
-import com.github.gauthierj.metamodel.annotation.Property;
 import com.github.gauthierj.metamodel.annotation.PropertyAccessMode;
-
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.List;
+import java.util.Map;
 
 @Document
 @Model(accessMode = PropertyAccessMode.GETTER)

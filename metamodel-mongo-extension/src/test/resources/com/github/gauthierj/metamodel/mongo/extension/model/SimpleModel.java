@@ -3,7 +3,6 @@ package com.github.gauthierj.metamodel.mongo.extension.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 public class SimpleModel {
