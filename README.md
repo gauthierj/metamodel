@@ -13,6 +13,8 @@ This tools generates a metamodel class that allows to easily manipulates propert
 Add the following dependencies to you Maven project:
 
 ```xml
+    <dependecies>
+        ...
         <dependency>
             <groupId>com.github.gauthierj</groupId>
             <artifactId>metamodel-annotation</artifactId>
@@ -29,6 +31,23 @@ Add the following dependencies to you Maven project:
             <version>xxx</version>
             <scope>provided</scope>
         </dependency>
+        ...
+    </dependencies>
+    
+    <repositories>
+        ...
+        <repository>
+            <id>github-metamodel</id>
+            <url>https://github.com/gauthierj/metamodel/raw/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        ...
+    </repositories>
 ```
 
 ## TL;DR
