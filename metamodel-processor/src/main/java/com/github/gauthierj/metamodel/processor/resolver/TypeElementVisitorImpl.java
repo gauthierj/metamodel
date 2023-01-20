@@ -49,10 +49,11 @@ public class TypeElementVisitorImpl implements TypeElementVisitor {
         Set<PropertyInformation> propertyInformations = new LinkedHashSet<>();
         Optional.ofNullable(e.getSuperclass())
                 .map(types::asElement)
-                .filter(elm -> !((TypeElement) elm).getQualifiedName().contentEquals(Object.class.getCanonicalName()))
+                .filter(elm -> !((TypeElement) elm).getQualifiedName().toString().startsWith("java."))
                 .ifPresent(typeElement -> propertyInformations.addAll(typeElement.accept(this, context)));
         e.getInterfaces().stream()
                 .map(types::asElement)
+                .filter(elm -> !((TypeElement) elm).getQualifiedName().toString().startsWith("java."))
                 .forEach(elm -> propertyInformations.addAll(elm.accept(this, context)));
         e.getEnclosedElements().forEach(elm -> propertyInformations.addAll(elm.accept(this, context)));
         return propertyInformations;
