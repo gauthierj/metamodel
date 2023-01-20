@@ -38,7 +38,7 @@ public class ModelProcessor extends AbstractProcessor {
         new GeneratedClassWriter(processingEnv.getFiler(), processingEnv.getMessager())
                 .writeGeneratedClasses(typeInformations);
 
-        return true;
+        return false;
     }
 
     @Override
