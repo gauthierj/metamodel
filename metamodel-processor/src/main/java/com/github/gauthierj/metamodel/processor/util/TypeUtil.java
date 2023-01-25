@@ -25,6 +25,7 @@ public class TypeUtil {
     private final Set<TypeMirror> typeWrapperTypes;
     private final Set<TypeMirror> simpleTypes;
     private final TypeMirror mapType;
+    private final TypeMirror enumType;
 
     public TypeUtil(Types types, Elements elements) {
         this.types = types;
@@ -55,6 +56,7 @@ public class TypeUtil {
                 .collect(Collectors.toSet());
 
         this.mapType = types.erasure(elements.getTypeElement(Map.class.getCanonicalName()).asType());
+        this.enumType = types.erasure(elements.getTypeElement(Enum.class.getCanonicalName()).asType());
     }
 
     public boolean isMap(TypeMirror typeMirror) {
@@ -70,7 +72,7 @@ public class TypeUtil {
             case ARRAY:
                 return isSimpleType(((ArrayType) typeMirror).getComponentType());
             case DECLARED:
-                return isSubTypeOfSimpleType((DeclaredType) typeMirror);
+                return isSubTypeOfSimpleType((DeclaredType) typeMirror) || isEnum((DeclaredType) typeMirror);
             default:
                 return false;
         }
@@ -90,6 +92,10 @@ public class TypeUtil {
     private boolean isSubTypeOfSimpleType(DeclaredType declaredType) {
         return simpleTypes.stream()
                 .anyMatch(simpleType -> types.isSubtype(declaredType, simpleType));
+    }
+
+    private boolean isEnum(DeclaredType declaredType) {
+        return types.isSubtype(types.erasure(declaredType), enumType);
     }
 
     private TypeMirror getTypeWrapperWrappedType(DeclaredType declaredType) {
