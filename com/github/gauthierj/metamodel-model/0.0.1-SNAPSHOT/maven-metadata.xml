@@ -3,21 +3,21 @@
   <groupId>com.github.gauthierj</groupId>
   <artifactId>metamodel-model</artifactId>
   <versioning>
-    <lastUpdated>20230120131807</lastUpdated>
+    <lastUpdated>20230125151723</lastUpdated>
     <snapshot>
-      <timestamp>20230120.131807</timestamp>
+      <timestamp>20230125.151723</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
     <snapshotVersions>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>0.0.1-20230120.131807-1</value>
-        <updated>20230120131807</updated>
+        <value>0.0.1-20230125.151723-1</value>
+        <updated>20230125151723</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>0.0.1-20230120.131807-1</value>
-        <updated>20230120131807</updated>
+        <value>0.0.1-20230125.151723-1</value>
+        <updated>20230125151723</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
