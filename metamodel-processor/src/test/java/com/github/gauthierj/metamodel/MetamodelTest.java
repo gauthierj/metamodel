@@ -37,6 +37,7 @@ class MetamodelTest {
         assertTrue(hasSimpleProprety(simpleModelByField, "aStringArray"));
         assertTrue(hasSimpleProprety(simpleModelByField, "aStringProperty"));
         assertTrue(hasSimpleProprety(simpleModelByField, "aPropertyWithADifferentName", "someDifferentName"));
+        assertTrue(hasSimpleProprety(simpleModelByField, "anEnumProperty"));
         assertTrue(hasComplexProperty(simpleModelByField, "aMapProperty", "_Model"));
     }
 
@@ -51,16 +52,17 @@ class MetamodelTest {
         assertEquals(1, compile.generatedSourceFiles().size());
 
         Optional<JavaFileObject> javaFileObject = compile.generatedSourceFile("com.github.gauthierj.metamodel.processor.model._SimpleModelByGetter");
-        String simpleModelByField = javaFileObject.orElseThrow().getCharContent(true).toString();
+        String simpleModelByGetter = javaFileObject.orElseThrow().getCharContent(true).toString();
 
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "anIntProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aPrimitiveBooleanProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aBooleanProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringListProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringArray"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aPropertyWithAnotherName", "someDifferentName"));
+        assertTrue(hasSimpleProprety(simpleModelByGetter, "aStringProperty"));
+        assertTrue(hasSimpleProprety(simpleModelByGetter, "anIntProperty"));
+        assertTrue(hasSimpleProprety(simpleModelByGetter, "aPrimitiveBooleanProperty"));
+        assertTrue(hasSimpleProprety(simpleModelByGetter, "aBooleanProperty"));
+        assertTrue(hasSimpleProprety(simpleModelByGetter, "aStringListProperty"));
+        assertTrue(hasSimpleProprety(simpleModelByGetter, "aStringArray"));
+        assertTrue(hasSimpleProprety(simpleModelByGetter, "aStringProperty"));
+        assertTrue(hasSimpleProprety(simpleModelByGetter, "aPropertyWithAnotherName", "someDifferentName"));
+        assertTrue(hasSimpleProprety(simpleModelByGetter, "anEnumProperty"));
     }
 
     @Test

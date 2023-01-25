@@ -8,12 +8,17 @@ import java.util.Optional;
 
 public class SimpleModel {
 
+    public enum SomeEnum {
+        VAL1, VAL2;
+    }
+
     private final String aStringProperty;
     private final int anIntProperty;
     private final boolean aPrimitiveBooleanProperty;
     private final Boolean aBooleanProperty;
     private final List<String> aStringListProperty;
     private final String[] aStringArray;
+    private SimpleModel.SomeEnum anEnumProperty;
 
     private final Map<String, Object> aMapProperty = new HashMap<>();
 
@@ -59,5 +64,9 @@ public class SimpleModel {
 
     public Map<String, Object> getAMapProperty() {
         return Map.copyOf(aMapProperty);
+    }
+
+    public SimpleModel.SomeEnum getAnEnumProperty() {
+        return anEnumProperty;
     }
 }
