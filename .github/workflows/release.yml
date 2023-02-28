@@ -41,20 +41,9 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         custom_tag: ${{ env.MASTER_VERSION }}
-    - name: Push master
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: master
-        tags: true
     - name: Update develop version
       run: mvn -B versions:set -DnewVersion=${{ github.event.inputs.new_develop_version }} -DgenerateBackupPoms=false --file pom.xml
     - name: Commit changes on develop after releasing
       uses: EndBug/add-and-commit@v9
       with:
         message: 'Set new develop version'
-    - name: Push develop
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: develop
