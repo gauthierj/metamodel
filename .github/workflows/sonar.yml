@@ -2,9 +2,7 @@ name: Sonar analysis
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches: [ "develop", "master" ]
   workflow_dispatch:
     
 
