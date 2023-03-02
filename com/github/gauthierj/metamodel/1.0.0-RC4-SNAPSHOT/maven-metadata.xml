@@ -3,16 +3,16 @@
   <groupId>com.github.gauthierj</groupId>
   <artifactId>metamodel</artifactId>
   <versioning>
-    <lastUpdated>20230302104253</lastUpdated>
+    <lastUpdated>20230302104610</lastUpdated>
     <snapshot>
-      <timestamp>20230302.104253</timestamp>
+      <timestamp>20230302.104610</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
     <snapshotVersions>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>1.0.0-RC4-20230302.104253-1</value>
-        <updated>20230302104253</updated>
+        <value>1.0.0-RC4-20230302.104610-1</value>
+        <updated>20230302104610</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
