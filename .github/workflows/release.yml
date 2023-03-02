@@ -25,6 +25,16 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
+    - name: Setup maven repository cache
+      uses: actions/cache@v3.2.1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-m2-repo
+        restore-keys: ${{ runner.os }}-m2-repo
+    - name: Setup maven settings.xml
+      uses: whelk-io/maven-settings-xml-action@v21
+      with:
+        servers: '[{ "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.DEPLOY_TOKEN }}" }]'
     - name: Remove '-SNAPSHOT' on develop versions
       run: |
         git checkout develop && git pull
