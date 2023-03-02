@@ -10,9 +10,9 @@ name: Deploy
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "develop" ]
   workflow_dispatch:
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
       with:
         servers: '[{ "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.DEPLOY_TOKEN }}" }]'
     - name: Build with Maven
-      run: mvn -B clean deploy --file pom.xml
+      run: mvn -B clean deploy -Prelease,deploy --file pom.xml
 
     # Not working ...
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
