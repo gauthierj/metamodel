@@ -35,7 +35,7 @@ jobs:
       run: |
         git checkout develop && git pull
         git checkout master && git pull
-        git merge develop -Xtheirs -m "Merging develop into master"
+        git merge develop -Xtheirs -m "Merging develop into master" --allow-unrelated-histories
     - name: Tag master
       run: |
         git tag -a "v$(mvn -B -N help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)"
