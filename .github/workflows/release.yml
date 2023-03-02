@@ -47,3 +47,9 @@ jobs:
       uses: EndBug/add-and-commit@v9
       with:
         message: 'Set new develop version'
+    - name: Checkout 'master'
+      uses: actions/checkout@v3
+      with:
+        ref: master
+    - name: Deploy 'master'
+      run: mvn -B clean deploy -Prelease,deploy --file pom.xml
