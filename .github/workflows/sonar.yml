@@ -3,6 +3,14 @@ name: Sonar analysis
 on:
   push:
     branches: [ "develop", "master" ]
+    paths-ignore: 
+      - .github/workflows/**
+      - .mvn/wrapper
+      - .gitignore
+      - LICENSE
+      - README.md
+      - mvnw
+      - mvnw.cmd
   workflow_dispatch:
     
 

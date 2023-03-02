@@ -11,8 +11,24 @@ name: Deploy
 on:
   push:
     branches: [ "develop" ]
+    paths-ignore: 
+      - .github/workflows/**
+      - .mvn/wrapper
+      - .gitignore
+      - LICENSE
+      - README.md
+      - mvnw
+      - mvnw.cmd
   pull_request:
     branches: [ "develop" ]
+    paths-ignore: 
+      - .github/workflows/**
+      - .mvn/wrapper
+      - .gitignore
+      - LICENSE
+      - README.md
+      - mvnw
+      - mvnw.cmd
   workflow_dispatch:
 
 jobs:
