@@ -15,41 +15,38 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: develop
+    - name: Initialize Git environment
+      run: |
+        git config --global user.name "Gihub deploy action"
+        git config --global user.email "<>"
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
-    - name: Remove '-SNAPSHOT'
-      run: mvn -B versions:set -DremoveSnapshot -DgenerateBackupPoms=false --file pom.xml
-    - name: Commit changes on develop
-      uses: EndBug/add-and-commit@v9
-      with:
-        message: 'Removed -SNAPSHOT before releasing'
+    - name: Remove '-SNAPSHOT' on develop versions
+      run: |
+        git checkout develop && git pull
+        mvn -B versions:set -DremoveSnapshot -DgenerateBackupPoms=false --file pom.xml
+        git commit -am 'Removed -SNAPSHOT before releasing'
     - name: Merge develop into master
-      uses: devmasx/merge-branch@v1.4.0
-      with:
-          type: now
-          from_branch: develop
-          target_branch: master
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Output version
-      run: echo "MASTER_VERSION=$(mvn -B -N help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+      run: |
+        git checkout master && git pull
+        git merge develop -Xtheirs
     - name: Tag master
-      uses: mathieudutour/github-tag-action@v6.1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        custom_tag: ${{ env.MASTER_VERSION }}
-    - name: Update develop version
-      run: mvn -B versions:set -DnewVersion=${{ github.event.inputs.new_develop_version }} -DgenerateBackupPoms=false --file pom.xml
-    - name: Commit changes on develop after releasing
-      uses: EndBug/add-and-commit@v9
-      with:
-        message: 'Set new develop version'
-    - name: Checkout 'master'
-      uses: actions/checkout@v3
-      with:
-        ref: master
+      run: |
+        git tag -a "v$(mvn -B -N help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)"
+    - name: Update version and push develop
+      run: |
+        git checkout develop
+        mvn -B versions:set -DnewVersion=${{ github.event.inputs.new_develop_version }} -DgenerateBackupPoms=false --file pom.xml
+        git commit -am "Set new develop version"
     - name: Deploy 'master'
-      run: mvn -B clean deploy -Prelease,deploy --file pom.xml
+      run: |
+        git checkout master
+        mvn -B clean deploy -Prelease,deploy --file pom.xml
+    - name: Push develop and master
+      run: |
+        git checkout develop && git push
+        git checkout master && git push --tags
