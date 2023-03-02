@@ -33,8 +33,9 @@ jobs:
         git diff-index --quiet HEAD || git commit -am 'Removed -SNAPSHOT before releasing'
     - name: Merge develop into master
       run: |
+        git checkout develop && git pull
         git checkout master && git pull
-        git merge develop -Xtheirs
+        git merge develop -Xtheirs -m "Merging develop into master"
     - name: Tag master
       run: |
         git tag -a "v$(mvn -B -N help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)"
