@@ -3,33 +3,33 @@
   <groupId>com.github.gauthierj</groupId>
   <artifactId>metamodel-model</artifactId>
   <versioning>
-    <lastUpdated>20230302104610</lastUpdated>
+    <lastUpdated>20230302105653</lastUpdated>
     <snapshot>
-      <timestamp>20230302.104610</timestamp>
+      <timestamp>20230302.105653</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
     <snapshotVersions>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>1.0.0-RC4-20230302.104610-1</value>
-        <updated>20230302104610</updated>
+        <value>1.0.0-RC4-20230302.105653-1</value>
+        <updated>20230302105653</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>1.0.0-RC4-20230302.104610-1</value>
-        <updated>20230302104610</updated>
+        <value>1.0.0-RC4-20230302.105653-1</value>
+        <updated>20230302105653</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>sources</classifier>
         <extension>jar</extension>
-        <value>1.0.0-RC4-20230302.104610-1</value>
-        <updated>20230302104610</updated>
+        <value>1.0.0-RC4-20230302.105653-1</value>
+        <updated>20230302105653</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>javadoc</classifier>
         <extension>jar</extension>
-        <value>1.0.0-RC4-20230302.104610-1</value>
-        <updated>20230302104610</updated>
+        <value>1.0.0-RC4-20230302.105653-1</value>
+        <updated>20230302105653</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
