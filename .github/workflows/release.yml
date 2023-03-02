@@ -29,7 +29,8 @@ jobs:
       run: |
         git checkout develop && git pull
         mvn -B versions:set -DremoveSnapshot -DgenerateBackupPoms=false --file pom.xml
-        git commit -am 'Removed -SNAPSHOT before releasing'
+        git add --all
+        git diff-index --quiet HEAD || git commit -am 'Removed -SNAPSHOT before releasing'
     - name: Merge develop into master
       run: |
         git checkout master && git pull
