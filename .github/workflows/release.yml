@@ -38,13 +38,14 @@ jobs:
         git merge develop -Xtheirs -m "Merging develop into master" --allow-unrelated-histories
     - name: Tag master
       run: |
-        git tag -a "v$(mvn -B -N help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)"
-    - name: Update version and push develop
+        git tag -a "v$(mvn -B -N help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" -m "Tagging release version"
+    - name: Update develop version and deploy
       run: |
         git checkout develop
         mvn -B versions:set -DnewVersion=${{ github.event.inputs.new_develop_version }} -DgenerateBackupPoms=false --file pom.xml
         git commit -am "Set new develop version"
-    - name: Deploy 'master'
+        mvn -B clean deploy -Prelease,deploy --file pom.xml
+    - name: Deploy master
       run: |
         git checkout master
         mvn -B clean deploy -Prelease,deploy --file pom.xml
