@@ -6,7 +6,7 @@
 
     <groupId>com.github.gauthierj</groupId>
     <artifactId>metamodel</artifactId>
-    <version>1.0.0-RC5</version>
+    <version>1.0.0-RC6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <url>https://github.com/gauthierj/metamodel</url>
