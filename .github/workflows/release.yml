@@ -19,12 +19,6 @@ jobs:
       run: |
         git config --global user.name "Gihub deploy action"
         git config --global user.email "<>"
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: maven
     - name: Setup maven repository cache
       uses: actions/cache@v3.2.1
       with:
