@@ -56,4 +56,4 @@ jobs:
     - name: Push develop and master
       run: |
         git checkout develop && git push
-        git checkout master && git push --tags
+        git checkout master && git push && git push --tags
