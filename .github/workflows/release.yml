@@ -17,7 +17,7 @@ jobs:
         ref: develop
     - name: Initialize Git environment
       run: |
-        git config --global user.name "Gihub deploy action"
+        git config --global user.name "Github release action"
         git config --global user.email "<>"
     - name: Setup maven repository cache
       uses: actions/cache@v3.2.1
@@ -48,11 +48,11 @@ jobs:
         git checkout develop
         mvn -B versions:set -DnewVersion=${{ github.event.inputs.new_develop_version }} -DgenerateBackupPoms=false --file pom.xml
         git commit -am "Set new develop version"
-        mvn -B clean deploy -Prelease,deploy --file pom.xml
+        mvn -B clean deploy -Prelease,github-deploy --file pom.xml
     - name: Deploy master
       run: |
         git checkout master
-        mvn -B clean deploy -Prelease,deploy --file pom.xml
+        mvn -B clean deploy -Prelease,github-deploy --file pom.xml
     - name: Push develop and master
       run: |
         git checkout develop && git push

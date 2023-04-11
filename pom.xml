@@ -166,14 +166,14 @@
             </build>
         </profile>
         <profile>
-            <id>deploy</id>
+            <id>github-deploy</id>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-deploy-plugin</artifactId>
                         <version>3.0.0</version>
                         <configuration>
-                            <altDeploymentRepository>internal.repo::default::file://${staging.m2.repo}</altDeploymentRepository>
+                            <altDeploymentRepository>internal.repo::file://${staging.m2.repo}</altDeploymentRepository>
                         </configuration>
                     </plugin>
                     <plugin>
