@@ -1,0 +1,210 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.gauthierj</groupId>
+    <artifactId>metamodel</artifactId>
+    <version>1.0.0-RC7-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <url>https://github.com/gauthierj/metamodel</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://github.com/gauthierj/metamodel/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Gauthier JACQUES</name>
+            <url>https://github.com/gauthierj</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/gauthierj/metamodel</url>
+        <connection>scm:git:git@github.com:gauthierj/metamodel.git</connection>
+        <developerConnection>scm:git:ssh//github.com:gauthierj/metamodel.git</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${staging.m2.repo}</url>
+        </repository>
+    </distributionManagement>
+
+    <modules>
+        <module>metamodel-annotation</module>
+        <module>metamodel-classbuilder</module>
+        <module>metamodel-generator</module>
+        <module>metamodel-integration-test</module>
+        <module>metamodel-model</module>
+        <module>metamodel-mongo-extension</module>
+        <module>metamodel-processor</module>
+    </modules>
+
+    <properties>
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <staging.m2.repo>${project.build.directory}/mvn-repo</staging.m2.repo>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.gauthierj</groupId>
+                <artifactId>metamodel-annotation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.gauthierj</groupId>
+                <artifactId>metamodel-classbuilder</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.gauthierj</groupId>
+                <artifactId>metamodel-generator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.gauthierj</groupId>
+                <artifactId>metamodel-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.gauthierj</groupId>
+                <artifactId>metamodel-mongo-extension</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.gauthierj</groupId>
+                <artifactId>metamodel-processor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M7</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>code-coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.8</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadoc</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>github-deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <configuration>
+                            <altDeploymentRepository>internal.repo::file://${staging.m2.repo}</altDeploymentRepository>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>site-maven-plugin</artifactId>
+                        <version>0.12</version>
+                        <executions>
+                            <execution>
+                                <id>github-deploy</id>
+                                <goals>
+                                    <goal>site</goal>
+                                </goals>
+                                <phase>deploy</phase>
+                                <configuration>
+                                    <server>github</server>
+                                    <repositoryOwner>gauthierj</repositoryOwner>    <!-- github username  -->
+                                    <repositoryName>metamodel</repositoryName>      <!-- github repo name -->
+                                    <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                                    <merge>true</merge>
+                                    <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+                                    <outputDirectory>${staging.m2.repo}</outputDirectory> <!-- matches distribution management repository url above -->
+                                    <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
