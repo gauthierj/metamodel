@@ -37,4 +37,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B package verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=gauthierj_metamodel -Dsonar.organization=github-gauthierj -Dsonar.host.url=https://sonarcloud.io -Pcode-coverage --file pom.xml
+      run: mvn -B package verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.10.0.2594:sonar -Dsonar.projectKey=gauthierj_metamodel -Dsonar.organization=github-gauthierj -Dsonar.host.url=https://sonarcloud.io -Pcode-coverage --file pom.xml
