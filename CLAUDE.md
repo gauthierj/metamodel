@@ -72,6 +72,12 @@ Similarly, `PropertyNameResolver` is SPI-discovered and controls how property na
 - Ignore: `@Property(ignore = true)`
 - Getter pattern defaults to `^(?:is|get)([A-Z][a-zA-Z0-9_$]*)$`
 
+## Branch Strategy
+
+- **All development must happen on the `develop` branch.**
+- **Never commit or push code changes directly to `master`.** Master is managed exclusively by the release workflow.
+- **IMPORTANT:** If the current branch is `master` and there are uncommitted changes or the user asks to modify code, warn the user immediately before doing anything else.
+
 ## Release Process
 
 Releases are managed by the GitHub Actions `release.yml` workflow (manual trigger). It:
