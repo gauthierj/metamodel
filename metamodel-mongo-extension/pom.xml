@@ -7,14 +7,14 @@
     <artifactId>metamodel-mongo-extension</artifactId>
 
     <parent>
-        <groupId>com.github.gauthierj</groupId>
+        <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>
         <version>1.0.0-RC7-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.gauthierj</groupId>
+            <groupId>io.github.gauthierj</groupId>
             <artifactId>metamodel-processor</artifactId>
         </dependency>
         <dependency>

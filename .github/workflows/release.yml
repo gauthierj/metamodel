@@ -1,4 +1,4 @@
-name: Release
+name: Deploy Release
 
 on:
   workflow_dispatch:
@@ -7,52 +7,65 @@ on:
         description: 'New development version'
         required: true
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout 'develop'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: develop
     - name: Initialize Git environment
       run: |
         git config --global user.name "Github release action"
         git config --global user.email "<>"
-    - name: Setup maven repository cache
-      uses: actions/cache@v3.2.1
+    - name: Set up JDK 17 (with GPG key import)
+      uses: actions/setup-java@v4
       with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-m2-repo
-        restore-keys: ${{ runner.os }}-m2-repo
-    - name: Setup maven settings.xml
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+        gpg-passphrase: MAVEN_GPG_PASSPHRASE
+    - name: Configure Maven servers
       uses: whelk-io/maven-settings-xml-action@v21
       with:
-        servers: '[{ "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.DEPLOY_TOKEN }}" }]'
-    - name: Remove '-SNAPSHOT' on develop versions
+        servers: >
+          [
+            { "id": "github",  "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" },
+            { "id": "central", "username": "${{ secrets.CENTRAL_USERNAME }}", "password": "${{ secrets.CENTRAL_TOKEN }}" }
+          ]
+    - name: Remove '-SNAPSHOT' on develop
       run: |
         git checkout develop && git pull
         mvn -B versions:set -DremoveSnapshot -DgenerateBackupPoms=false --file pom.xml
-        git add --all
         git diff-index --quiet HEAD || git commit -am 'Removed -SNAPSHOT before releasing'
     - name: Merge develop into master
       run: |
-        git checkout develop && git pull
         git checkout master && git pull
         git merge develop -Xtheirs -m "Merging develop into master" --allow-unrelated-histories
     - name: Tag master
       run: |
         git tag -a "v$(mvn -B -N help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" -m "Tagging release version"
-    - name: Update develop version and deploy
+    - name: Deploy release to Maven Central
+      run: |
+        git checkout master
+        mvn -B clean deploy -Prelease --file pom.xml
+      env:
+        MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    - name: Update develop to next snapshot version
       run: |
         git checkout develop
         mvn -B versions:set -DnewVersion=${{ github.event.inputs.new_develop_version }} -DgenerateBackupPoms=false --file pom.xml
         git commit -am "Set new develop version"
-        mvn -B clean deploy -Prelease,github-deploy --file pom.xml
-    - name: Deploy master
-      run: |
-        git checkout master
-        mvn -B clean deploy -Prelease,github-deploy --file pom.xml
+    - name: Deploy new snapshot to GitHub Packages
+      run: mvn -B clean deploy --file pom.xml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Push develop and master
       run: |
         git checkout develop && git push
