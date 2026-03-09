@@ -18,6 +18,6 @@ public class UnsupportedPropertyInformationHandler extends _PropertyInformationS
 
     @Override
     public void _handleProperty(ClassBuilder classBuilder, TypeInformation typeInformation, UnsupportedPropertyInformation propertyInformation) {
-        messager.printMessage(Diagnostic.Kind.WARNING, String.format("Could handle property %s from type %s", propertyInformation.name(), propertyInformation.type()));
+        messager.printMessage(Diagnostic.Kind.WARNING, String.format("Could not handle property %s from type %s", propertyInformation.name(), propertyInformation.type()));
     }
 }

@@ -70,13 +70,11 @@ public class IdPropertyNameResolver implements PropertyNameResolver {
     }
 
     private <T> Optional<T> getValue(AnnotationMirror annotationMirror, String name, Class<T> targetClass) {
-        Element element = annotationMirror.getAnnotationType().asElement().getEnclosedElements()
+        return annotationMirror.getAnnotationType().asElement().getEnclosedElements()
                 .stream()
                 .filter(e -> e.getSimpleName().toString().equals(name))
                 .findFirst()
-                .orElseThrow();
-
-        return Optional.ofNullable(annotationMirror.getElementValues().get(element))
+                .map(element -> annotationMirror.getElementValues().get(element))
                 .map(AnnotationValue::getValue)
                 .filter(targetClass::isInstance)
                 .map(targetClass::cast);
