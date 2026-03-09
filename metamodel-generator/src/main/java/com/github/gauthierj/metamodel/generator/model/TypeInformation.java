@@ -10,10 +10,8 @@ public interface TypeInformation {
 
     @Value.Parameter(order = 0)
     String packageName();
-
-    @Value.Parameter(order = 1)
+    @Value.Parameter(order = 0)
     String className();
-
     List<PropertyInformation> properties();
 
     default String fullyQualifiedName() {

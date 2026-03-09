@@ -7,9 +7,8 @@ import java.lang.annotation.Target;
 public @interface Model {
 
     String DEFAULT_GETTER_PATTERN = "^(?:is|get)([A-Z][a-zA-Z0-9_$]*)$";
-    String DEFAULT_GENERATED_CLASS_NAME = "##default";
     PropertyAccessMode DEFAULT_ACCESS_MODE = PropertyAccessMode.FIELD;
     PropertyAccessMode accessMode() default PropertyAccessMode.FIELD;
     String getterPattern() default DEFAULT_GETTER_PATTERN;
-    String generatedClassName() default DEFAULT_GENERATED_CLASS_NAME;
+    String generatedClassName() default "";
 }

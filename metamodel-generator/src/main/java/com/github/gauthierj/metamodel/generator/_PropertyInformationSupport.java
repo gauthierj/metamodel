@@ -6,14 +6,14 @@ import com.github.gauthierj.metamodel.generator.model.TypeInformation;
 
 public abstract class _PropertyInformationSupport<T extends PropertyInformation> implements PropertyInformationHandler{
 
-    private final Class<T> supportedClass;
+    private final Class<T> suppprtedClass;
 
-    protected _PropertyInformationSupport(Class<T> supportedClass) {
-        this.supportedClass = supportedClass;
+    protected _PropertyInformationSupport(Class<T> suppprtedClass) {
+        this.suppprtedClass = suppprtedClass;
     }
 
     public boolean supports(PropertyInformation propertyInformation) {
-        return supportedClass.isAssignableFrom(propertyInformation.getClass());
+        return suppprtedClass.isAssignableFrom(propertyInformation.getClass());
     }
 
     @Override

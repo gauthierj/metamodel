@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNullElse;
 public abstract class _ClassBuilderImpl<T extends _ClassBuilder<T>> implements _ClassBuilder<T> {
 
     private boolean hasField = false;
-    private boolean firstMemberWritten = false;
+    private boolean hasMember = false;
 
     private final PicoWriter topWriter;
     private final PicoWriter importWriter;
@@ -74,28 +74,27 @@ public abstract class _ClassBuilderImpl<T extends _ClassBuilder<T>> implements _
     @Override
     @SuppressWarnings("unchecked")
     public MethodSignatureBuilder<T> constructor(Collection<Modifier> modifiers) {
-        writeEmptyLineIfNeeded(this.constructorWriter);
+        if(hasMember()) {
+            this.constructorWriter.writeln("");
+        }
         return new MethodSignatureBuilderImpl<>((T) this, constructorWriter.createDeferredWriter(), modifiers, null, className);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public MethodSignatureBuilder<T> method(Collection<Modifier> modifiers, String returnType, String name) {
-        writeEmptyLineIfNeeded(this.methodWriter);
+        if(hasMember()) {
+            this.methodWriter.writeln("");
+        }
         return new MethodSignatureBuilderImpl<>((T) this, methodWriter.createDeferredWriter(), modifiers, returnType, name);
     }
 
-    protected void writeEmptyLineIfNeeded(PicoWriter writer) {
-        if(shouldWriteEmptyLine()) {
-            writer.writeln("");
-        }
-    }
-
-    protected boolean shouldWriteEmptyLine() {
-        if(firstMemberWritten) {
+    protected boolean hasMember() {
+        if(hasMember) {
+            hasMember = true;
             return true;
         }
-        firstMemberWritten = true;
+        hasMember = true;
         return false;
     }
 

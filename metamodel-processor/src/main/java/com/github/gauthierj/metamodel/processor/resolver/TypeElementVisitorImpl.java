@@ -134,7 +134,7 @@ public class TypeElementVisitorImpl implements TypeElementVisitor {
                                                        String logicalName,
                                                        TypeElementVisitorContext context) {
 
-        PropertyAccessMode propertyAccesMode = getPropertyAccessMode(element, context.propertyAccessMode());
+        PropertyAccessMode propertyAccesMode = getPropertyAccesMode(element, context.propertyAccessMode());
         String getterPattern = getGetterPattern(element, context.getGetterPattern());
         String generatedClassName = getGeneratedClassName(element, actualTypeElement);
 
