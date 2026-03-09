@@ -21,7 +21,7 @@ public class TypeInformationResolver {
 
     private final Elements elements;
     private final TypeElementVisitorImpl typeElementVisitor;
-    private final Map<TypeInformationKey, TypeInformationImpl> resolvedTypeInformation = new ConcurrentHashMap<>();
+    private final Map<TypeInformationKey, MutableTypeInformation> resolvedTypeInformation = new ConcurrentHashMap<>();
 
     public TypeInformationResolver(Types types, Elements elements) {
         this.elements = elements;
@@ -31,15 +31,15 @@ public class TypeInformationResolver {
     public List<TypeInformation> resolveTypeInformations(List<TypeElement> annotatedTypeElements) {
         annotatedTypeElements.forEach(this::resolveTypeElement);
         while (resolvedTypeInformation.values().stream()
-                .anyMatch(TypeInformationImpl::hasUnresolvedPropertyInformation)) {
-            for (TypeInformationImpl value : resolvedTypeInformation.values()) {
-                resoloveUnresolvedTypeInformation(value);
+                .anyMatch(MutableTypeInformation::hasUnresolvedPropertyInformation)) {
+            for (MutableTypeInformation value : resolvedTypeInformation.values()) {
+                resolveUnresolvedTypeInformation(value);
             }
         }
         return List.copyOf(resolvedTypeInformation.values());
     }
 
-    private void resoloveUnresolvedTypeInformation(TypeInformationImpl typeInformationImpl) {
+    private void resolveUnresolvedTypeInformation(MutableTypeInformation typeInformationImpl) {
         typeInformationImpl.withProperties(
                 typeInformationImpl.properties().stream()
                         .map(propertyInformation -> {
@@ -53,7 +53,7 @@ public class TypeInformationResolver {
     private PropertyInformation resolveTypeInformation(UnresolvedTypePropertyInformation unresolvedTypePI) {
         TypeInformationKey key = TypeInformationKey.of(unresolvedTypePI.type(), unresolvedTypePI.generatedClassName());
         if(resolvedTypeInformation.containsKey(key)) {
-            TypeInformationImpl ti = resolvedTypeInformation.get(key);
+            MutableTypeInformation ti = resolvedTypeInformation.get(key);
             return StructuredPropertyInformationImpl.of(unresolvedTypePI.name(), unresolvedTypePI.logicalName(), ti);
         }
         return Optional.of(unresolvedTypePI)
@@ -63,21 +63,21 @@ public class TypeInformationResolver {
                 .orElseGet(() -> UnsupportedPropertyInformationImpl.of(unresolvedTypePI.name(), unresolvedTypePI.logicalName(), unresolvedTypePI.type()));
     }
 
-    private TypeInformationImpl resolveTypeElement(TypeElement typeElement) {
+    private MutableTypeInformation resolveTypeElement(TypeElement typeElement) {
         return resolveTypeElement(
                 typeElement,
-                ElementUtil.getPropertyAccesMode(typeElement),
+                ElementUtil.getPropertyAccessMode(typeElement),
                 ElementUtil.getGetterPattern(typeElement),
                 ElementUtil.getGeneratedClassName(typeElement)
         );
     }
 
-    private TypeInformationImpl resolveTypeElement(TypeElement typeElement,
-                                                   PropertyAccessMode propertyAccessMode,
-                                                   String getterPattern,
-                                                   String generatedClassName) {
+    private MutableTypeInformation resolveTypeElement(TypeElement typeElement,
+                                                      PropertyAccessMode propertyAccessMode,
+                                                      String getterPattern,
+                                                      String generatedClassName) {
 
-        TypeInformationImpl typeInformation = doResolveTypeElement(
+        MutableTypeInformation typeInformation = doResolveTypeElement(
                 typeElement,
                 propertyAccessMode,
                 getterPattern,
@@ -88,10 +88,10 @@ public class TypeInformationResolver {
         return typeInformation;
     }
 
-    private TypeInformationImpl doResolveTypeElement(TypeElement typeElement,
-                                                     PropertyAccessMode propertyAccessMode,
-                                                     String getterPattern,
-                                                     String generatedClassName) {
+    private MutableTypeInformation doResolveTypeElement(TypeElement typeElement,
+                                                        PropertyAccessMode propertyAccessMode,
+                                                        String getterPattern,
+                                                        String generatedClassName) {
 
         String qualifiedName = typeElement.getQualifiedName().toString();
         int lastDotIndex = qualifiedName.lastIndexOf('.');
@@ -105,7 +105,7 @@ public class TypeInformationResolver {
                         propertyAccessMode,
                         getterPattern));
 
-        return TypeInformationImpl.of(packageName, className, generatedClassName, propertyAccessMode)
+        return MutableTypeInformation.of(packageName, className, generatedClassName, propertyAccessMode)
                 .withProperties(propertyInformations);
     }
 }

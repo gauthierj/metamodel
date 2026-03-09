@@ -23,6 +23,7 @@ public class SimplePropertyInformationHandler extends _PropertyInformationSuppor
 
         classBuilder.publicMethod("String", propertyInformation.logicalName())
                 .body()
-                .writeln(String.format("return _property(%s);", staticPropertyFieldName));
+                .writeln(String.format("return _property(%s);", staticPropertyFieldName))
+                .build();
     }
 }

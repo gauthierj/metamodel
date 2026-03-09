@@ -2,32 +2,30 @@ package com.github.gauthierj.metamodel.processor.resolver;
 
 import com.github.gauthierj.metamodel.annotation.PropertyAccessMode;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class TypeElementVisitorContext {
 
-    private final Map<TypeInformationKey, TypeInformationImpl> resolvedTypes = new HashMap<>();
+    private final Map<TypeInformationKey, MutableTypeInformation> resolvedTypes;
     private final PropertyAccessMode propertyAccessMode;
     private final String getterPattern;
 
-    private TypeElementVisitorContext(Map<TypeInformationKey, TypeInformationImpl> resolvedTypes,
+    private TypeElementVisitorContext(Map<TypeInformationKey, MutableTypeInformation> resolvedTypes,
                                       PropertyAccessMode propertyAccessMode,
                                       String getterPattern) {
         this.propertyAccessMode = propertyAccessMode;
-        Optional.ofNullable(resolvedTypes).ifPresent(this.resolvedTypes::putAll);
+        this.resolvedTypes = Map.copyOf(resolvedTypes);
         this.getterPattern = getterPattern;
     }
 
-    public static TypeElementVisitorContext of(Map<TypeInformationKey, TypeInformationImpl> resolvedTypes,
+    public static TypeElementVisitorContext of(Map<TypeInformationKey, MutableTypeInformation> resolvedTypes,
                                                PropertyAccessMode propertyAccessMode,
                                                String getterPattern) {
         return new TypeElementVisitorContext(resolvedTypes, propertyAccessMode, getterPattern);
     }
 
-    public Map<TypeInformationKey, TypeInformationImpl> getResolvedTypes() {
-        return Map.copyOf(resolvedTypes);
+    public Map<TypeInformationKey, MutableTypeInformation> getResolvedTypes() {
+        return resolvedTypes;
     }
 
     public String getGetterPattern() {
