@@ -33,8 +33,8 @@ jobs:
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
     - name: Set GPG key ultimate trust
       run: |
-        GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep '^sec' | awk '{print $2}' | cut -d'/' -f2)
-        echo "${GPG_KEY_ID}:6:" | gpg --import-ownertrust
+        GPG_FINGERPRINT=$(gpg --list-secret-keys --with-colons | grep '^fpr' | head -1 | cut -d':' -f10)
+        echo "${GPG_FINGERPRINT}:6:" | gpg --import-ownertrust
     - name: Configure Maven servers
       uses: whelk-io/maven-settings-xml-action@v21
       with:
