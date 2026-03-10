@@ -6,6 +6,9 @@
 
     <artifactId>metamodel-model</artifactId>
 
+    <name>${project.artifactId}</name>
+    <description>Runtime base classes for generated metamodel instances.</description>
+
     <parent>
         <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>

@@ -6,6 +6,9 @@
 
     <artifactId>metamodel-processor</artifactId>
 
+    <name>${project.artifactId}</name>
+    <description>Java annotation processor (APT) entry point that drives metamodel class generation at compile time.</description>
+
     <parent>
         <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>

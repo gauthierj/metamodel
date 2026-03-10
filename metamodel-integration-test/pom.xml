@@ -6,6 +6,9 @@
 
     <artifactId>metamodel-integration-test</artifactId>
 
+    <name>${project.artifactId}</name>
+    <description>Integration tests for the metamodel annotation processor.</description>
+
     <parent>
         <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>

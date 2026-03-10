@@ -9,6 +9,9 @@
     <version>1.0.0-RC7-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>${project.artifactId}</name>
+    <description>Java annotation processor that generates type-safe metamodel classes, enabling refactor-safe access to property names and paths at compile time.</description>
+
     <url>https://github.com/gauthierj/metamodel</url>
 
     <licenses>

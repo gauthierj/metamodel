@@ -6,6 +6,9 @@
 
     <artifactId>metamodel-generator</artifactId>
 
+    <name>${project.artifactId}</name>
+    <description>Core source code generator that produces metamodel classes from type information.</description>
+
     <parent>
         <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>

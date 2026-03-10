@@ -6,6 +6,9 @@
 
     <artifactId>metamodel-annotation</artifactId>
 
+    <name>${project.artifactId}</name>
+    <description>Annotations for configuring metamodel generation (@Model, @Property).</description>
+
     <parent>
         <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>

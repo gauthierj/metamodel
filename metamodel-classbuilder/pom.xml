@@ -6,6 +6,9 @@
 
     <artifactId>metamodel-classbuilder</artifactId>
 
+    <name>${project.artifactId}</name>
+    <description>Fluent Java source code builder used internally by the metamodel generator.</description>
+
     <parent>
         <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>
