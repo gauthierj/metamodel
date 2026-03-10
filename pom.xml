@@ -177,6 +177,8 @@
                                         <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
                                         <arg>--batch</arg>
+                                        <arg>--trust-model</arg>
+                                        <arg>always</arg>
                                     </gpgArguments>
                                 </configuration>
                             </execution>
