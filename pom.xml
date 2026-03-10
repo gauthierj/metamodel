@@ -172,11 +172,10 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
-                                    <!-- Required for non-interactive GPG in CI -->
+                                    <passphrase>${env.MAVEN_GPG_PASSPHRASE}</passphrase>
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
-                                        <arg>--batch</arg>
                                         <arg>--trust-model</arg>
                                         <arg>always</arg>
                                     </gpgArguments>
