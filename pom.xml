@@ -32,7 +32,7 @@
     <scm>
         <url>https://github.com/gauthierj/metamodel</url>
         <connection>scm:git:git@github.com:gauthierj/metamodel.git</connection>
-        <developerConnection>scm:git:ssh//github.com:gauthierj/metamodel.git</developerConnection>
+        <developerConnection>scm:git:ssh://github.com:gauthierj/metamodel.git</developerConnection>
     </scm>
 
     <distributionManagement>
