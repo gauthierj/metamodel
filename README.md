@@ -4,13 +4,40 @@
 
 A simple metamodel generator for Java classes.
 
-This tool is useful when property names of Java classes need to be referenced in the code (_e.g._ in validation error objects indicating which field is faulty, or in criteria APIs such as the MongoDB client).
+This tool is useful when property names of Java classes need to be referenced in the code — for example in validation error objects indicating which field is faulty, or in criteria APIs such as the MongoDB client. It generates a metamodel class that provides type-safe, refactor-safe access to property names and paths.
 
-This tool generates a metamodel class that allows you to easily manipulate property names and paths.
+**Java 11+** required.
+
+---
+
+## Table of contents
+
+- [Getting started](#getting-started)
+  - [Maven](#maven)
+  - [Gradle](#gradle)
+  - [Spring Data MongoDB extension](#spring-data-mongodb-extension)
+- [How it works](#how-it-works)
+  - [What gets generated](#what-gets-generated)
+  - [Real-world example](#real-world-example)
+- [Property types](#property-types)
+  - [Simple properties](#simple-properties)
+  - [Structured properties](#structured-properties)
+  - [Map properties](#map-properties)
+- [Configuration](#configuration)
+  - [Field vs. getter detection](#field-vs-getter-detection)
+  - [Getter pattern](#getter-pattern)
+  - [Override property name](#override-property-name)
+  - [Ignore a property](#ignore-a-property)
+  - [Custom generated class name](#custom-generated-class-name)
+  - [Per-property metamodel overrides](#per-property-metamodel-overrides)
+- [Extensibility](#extensibility)
+- [Integration tests](#integration-tests)
+
+---
 
 ## Getting started
 
-Add the following dependencies to your Maven project:
+### Maven
 
 ```xml
 <dependencies>
@@ -33,11 +60,21 @@ Add the following dependencies to your Maven project:
 </dependencies>
 ```
 
+### Gradle
+
+```groovy
+dependencies {
+    implementation 'io.github.gauthierj:metamodel-annotation:xxx'
+    implementation 'io.github.gauthierj:metamodel-model:xxx'
+    annotationProcessor 'io.github.gauthierj:metamodel-processor:xxx'
+}
+```
+
 ### Spring Data MongoDB extension
 
-To automatically generate metamodels for classes annotated with Spring Data MongoDB's `@Document`,
-add the following dependency as well:
+To automatically generate metamodels for classes annotated with Spring Data MongoDB's `@Document`, add the following dependency as well:
 
+**Maven:**
 ```xml
 <dependency>
     <groupId>io.github.gauthierj</groupId>
@@ -47,167 +84,272 @@ add the following dependency as well:
 </dependency>
 ```
 
-With this extension on the annotation processor classpath, any `@Document`-annotated class will have
-a metamodel generated automatically. The extension also maps `@Id`-annotated fields to `"_id"` and
-respects `@Field` name overrides.
+**Gradle:**
+```groovy
+annotationProcessor 'io.github.gauthierj:metamodel-mongo-extension:xxx'
+```
 
-## TL;DR
+With this extension on the annotation processor classpath, any `@Document`-annotated class will have a metamodel generated automatically — no `@Model` annotation needed. The extension also maps `@Id`-annotated fields to `"_id"` and respects `@Field` name overrides.
 
-Have a look at the integration tests for practical examples: https://github.com/gauthierj/metamodel/tree/master/metamodel-integration-test
+---
 
-## Introduction
+## How it works
 
-This APT processor generates a simple metamodel for Java classes at compile time.
+### What gets generated
 
-This allows you to work with any Java class's property names very easily with the `@Model` annotation:
+Annotating a class with `@Model`:
 
-Given a Java class:
 ```java
 @Model
-public class SimpleClass {
-
-    private final int someProperty;
-
-    public SimpleClass(int someProperty) {
-        this.someProperty = someProperty;
-    }
-
-    public int getSomeProperty() {
-        return someProperty;
-    }
+public class Person {
+    private String firstName;
+    private String lastName;
+    private Address address;
 }
 ```
 
-It generates a metamodel class `_SimpleClass` that gives a structural way to access the names of the properties of `SimpleClass`:
+causes the processor to generate a `_Person` class at compile time:
 
 ```java
-public class SomeUtilClass {
+public class _Person extends _Model {
 
-    public void addCriteriaOnSomeProperty(int value) {
-        addCriteria(_SimpleClass.model().someProperty(), value);
+    private static final _Person MODEL = new _Person(_Path.of());
+
+    public static _Person model() { return MODEL; }
+
+    public String firstName() { return _property("firstName"); }
+    public String lastName()  { return _property("lastName"); }
+
+    public _Address address() {
+        return new _Address(super._rootPath().with("address"));
     }
 }
 ```
 
-## The metamodel
+Simple properties return a `String` (the property name). Structured properties return a sub-metamodel instance rooted at that property's path, enabling further navigation.
 
-### `@Model`, `_Model` and `_Path`
+### Real-world example
 
-Metamodels are generated by adding the `@Model` annotation on any Java class.
+A common use case is building MongoDB criteria in a type-safe, refactor-safe way:
 
-Property paths are represented by a `_Path` instance that encapsulates every path component from the root class to the property.
+```java
+@Document
+public class Order {
+    @Id
+    private String id;
+    private String customerId;
+    private Address shippingAddress;
+}
 
-Every generated metamodel inherits from the `_Model` class. This object encapsulates a `_Path` instance containing the current root path of the metamodel. This path can be retrieved either as a String via the `_path()` method, or as a `_Path` instance with the `_rootPath()` method.
+@Document
+public class Address {
+    private String street;
+    private String city;
+    private String zipCode;
+}
+```
 
-The `_Model` class also allows you to retrieve the complete path as a String for any property (even non-generated ones) via the `_property(String name)` method. It is also possible to retrieve a `_Path` instance with the `_propertyPath(String name)` method.
+Without metamodel, criteria are stringly-typed and break silently on rename:
 
-The processor recognizes three types of properties: simple, structured and map properties.
+```java
+// Fragile: renaming "city" won't cause a compile error
+Criteria.where("shippingAddress.city").is("Paris");
+```
+
+With metamodel:
+
+```java
+// Refactor-safe: renaming the field breaks the build
+Criteria.where(_Order.model().shippingAddress().city()).is("Paris");
+// -> "shippingAddress.city"
+```
+
+---
+
+## Property types
 
 ### Simple properties
 
-All basic Java types (`String`, `Number`, `Boolean`, primitives, ...), as well as `Collection` (and all its descendants) and `Optional` of such types are detected as simple properties. The processor generates a property name method in the generated metamodel.
+Primitives, `String`, `Number`, `Boolean`, `Enum`, `Collection`, `Optional`, and arrays are all detected as simple properties. The generated method returns the fully-qualified property path as a `String`.
 
 ```java
-String someSimplePropertyPath = _MyModel.model().someSimpleProperty();
-// someSimplePropertyPath == "someSimpleProperty"
+@Model
+public class Product {
+    private String name;
+    private double price;
+    private List<String> tags;
+}
+
+_Product.model().name()  // -> "name"
+_Product.model().price() // -> "price"
+_Product.model().tags()  // -> "tags"
 ```
 
 ### Structured properties
 
-All other types (except `Map`) are detected as structured properties. A whole metamodel is generated for such types and an instance of this metamodel with a root path corresponding to the full path of the property is returned by the property method in the main metamodel.
-
-This allows you to build the full path of properties in these objects.
+Any type that is not a simple property and not a `Map` is detected as a structured property. The processor generates a sub-metamodel for it and returns an instance rooted at the property path.
 
 ```java
-String aSimplePropertyPath = _MyModel.model()
-                                      .structuredProperty()
-                                      .againAStructuredProperty()
-                                      .aSimpleProperty();
-// aSimplePropertyPath == "structuredProperty.againAStructuredProperty.aSimpleProperty"
+@Model
+public class Order {
+    private Address shippingAddress;
+}
+
+_Order.model().shippingAddress().street() // -> "shippingAddress.street"
+_Order.model().shippingAddress().city()   // -> "shippingAddress.city"
+```
+
+This works transitively across any depth of nesting:
+
+```java
+_Order.model().shippingAddress().country().name() // -> "shippingAddress.country.name"
 ```
 
 ### Map properties
 
-Maps are detected as a bare metamodel without any defined additional properties.
-The `_property(String name)` method from the `_Model` class allows you to build the path of an entry in the Map.
+`Map` properties are exposed as a bare `_Model`, allowing dynamic key navigation via `_property(String name)`:
 
 ```java
-String aMapEntryPath = _MyModel.model()
-                                .structuredProperty()
-                                .aMapProperty()
-                                ._property("myEntry");
-// aMapEntryPath == "structuredProperty.aMapProperty.myEntry"
+@Model
+public class Product {
+    private Map<String, String> attributes;
+}
+
+_Product.model().attributes()._property("color") // -> "attributes.color"
 ```
 
-### Property detection
+---
 
-#### Fields vs. getters
+## Configuration
 
-The `@Model` annotation allows you to specify how properties are detected with the `accessMode` attribute.
+### Field vs. getter detection
 
-Properties can be inferred either by looking at the fields or the getter methods. The default behavior is field inference.
+By default, properties are discovered from **fields**. Switch to getter-based detection with `accessMode`:
 
-#### Getter pattern
+```java
+@Model(accessMode = PropertyAccessMode.GETTER)
+public class Person {
+    private String firstName; // ignored — no getter named getFirstName found
 
-When looking at getter methods, the pattern of a getter method can be specified in the `getterPattern` attribute.
+    public String getFirstName() { return firstName; } // -> "firstName"
+}
+```
 
-It matches by default all methods starting with `is` or `get` followed by an upper case letter: `^(?:is|get)([A-Z][a-zA-Z0-9_$]*)$`.
+### Getter pattern
 
-The pattern must have a single capturing group that holds the property name.
+When using getter-based detection, the getter pattern can be customized. The default matches `getXxx()` and `isXxx()`. The first capturing group of the regex defines the property name (first letter is decapitalized).
 
-### Specify generated class name
-
-The `@Model` annotation allows you to specify the generated class name with the `generatedClassName` attribute.
-
-This is particularly useful if a class must have several metamodels generated (_e.g._ one by field and one by getter), or if the default generated class name clashes with another class.
+```java
+@Model(accessMode = PropertyAccessMode.GETTER, getterPattern = "^fetch([A-Z][a-zA-Z0-9_$]*)$")
+public class Person {
+    public String fetchFirstName() { return firstName; } // -> "firstName"
+}
+```
 
 ### Override property name
 
-It may be useful to specify the property name you want to retrieve when it differs from the logical name of the property defined by the Java code (_e.g._: an `id` property in the class that must translate to `_id` in the metamodel).
-
-This is possible by adding a `@Property(name = "xxx")` annotation on the field or the getter of the property (depending on the detection mode).
-
-### Ignore property
-
-It may be useful to ignore some properties from the Java code (_e.g._ a matching method that is not a true getter, or a property that is not well handled by the processor).
-
-This is possible by adding a `@Property(ignore = true)` annotation on the field or the getter of the property (depending on the detection mode).
-
-### Metamodel generated via a structured property
-
-Structured properties are mapped as another metamodel. If a structured property type is not annotated with `@Model`, a metamodel for that type will be automatically generated, using the same parameters as the current metamodel (`accessMode` and `getterPattern`).
-
-It is possible to override these parameters, as well as specifying the generated class name by adding a `@Model` annotation on the property.
-
-If the type is already mapped by a metamodel and the property should generate a different one (_e.g._ field vs. getter), then a different generated class name must be provided.
+Use `@Property(name = "...")` to specify the property name returned at runtime, independently of the Java field or method name. This is useful when the serialized name differs from the Java name.
 
 ```java
-@Model(accessMode = PropertyAccessMode.FIELD)
-public class MyModel {
+@Model
+public class Person {
+    @Property(name = "first_name")
+    private String firstName;
+}
 
-    // The _OtherModel class will be generated with FIELD access mode
-    // Unless OtherModel is annotated by @Model
-    private OtherModel otherModel;
+_Person.model().firstName() // -> "first_name"
+```
+
+### Ignore a property
+
+Use `@Property(ignore = true)` to exclude a field or method from the generated metamodel.
+
+```java
+@Model
+public class Person {
+    private String firstName;
+
+    @Property(ignore = true)
+    private transient String cachedFullName;
 }
 ```
 
+### Custom generated class name
+
+By default the generated class is named `_ClassName`. Use `generatedClassName` to override this — for example when two metamodels of the same type are needed, or to avoid a name clash.
+
+```java
+@Model(generatedClassName = "_PersonByGetter", accessMode = PropertyAccessMode.GETTER)
+public class Person { ... }
+```
+
+### Per-property metamodel overrides
+
+`@Model` can also be placed on a field or method to override how the sub-metamodel for that specific property is generated. This is useful when the property type is not itself annotated with `@Model` but you want a specific access mode or generated class name for it.
+
 ```java
 @Model(accessMode = PropertyAccessMode.FIELD)
-public class MyModel {
+public class Order {
 
-    // The _OtherModel class will be generated with GETTER access mode
-    // Unless OtherModel is annotated by @Model
+    // Address is not annotated @Model, but generate its metamodel with GETTER mode
     @Model(accessMode = PropertyAccessMode.GETTER)
-    private OtherModel otherModel;
+    private Address shippingAddress;
 }
 ```
+
+If two properties reference the same type but need different metamodels, assign distinct generated class names:
 
 ```java
 @Model(accessMode = PropertyAccessMode.FIELD)
-public class MyModel {
+public class Order {
 
-    // The _MyModel_OtherModel class will be generated with GETTER access mode
-    @Model(accessMode = PropertyAccessMode.GETTER, generatedClassName = "_MyModel_OtherModel")
-    private OtherModel otherModel;
+    @Model(accessMode = PropertyAccessMode.GETTER, generatedClassName = "_AddressByGetter")
+    private Address shippingAddress;
+
+    private Address billingAddress; // uses default _Address (FIELD mode)
 }
 ```
+
+---
+
+## Extensibility
+
+The processor is designed to be extended via two `ServiceLoader`-discovered SPI interfaces:
+
+**`ModelAnnotationProvider`** — declares which annotations trigger metamodel generation. The built-in implementation handles `@Model`. The MongoDB extension adds `@Document`. Implement this interface to trigger generation from your own annotation:
+
+```java
+public class MyAnnotationProvider implements ModelAnnotationProvider {
+    @Override
+    public Set<String> getModelAnnotations() {
+        return Set.of("com.example.MyTriggerAnnotation");
+    }
+}
+```
+
+Register it in `META-INF/services/com.github.gauthierj.metamodel.processor.ModelAnnotationProvider`.
+
+**`PropertyNameResolver`** — customizes how property names are resolved. The MongoDB extension uses this to map `@Id` → `"_id"` and `@Field` → the declared field name. Implement this interface to remap names from your own annotations:
+
+```java
+public class MyPropertyNameResolver implements PropertyNameResolver {
+    @Override
+    public Optional<String> resolve(VariableElement field) {
+        MyAnnotation ann = field.getAnnotation(MyAnnotation.class);
+        return ann != null ? Optional.of(ann.value()) : Optional.empty();
+    }
+
+    @Override
+    public Optional<String> resolve(ExecutableElement method) {
+        return Optional.empty();
+    }
+}
+```
+
+Register it in `META-INF/services/com.github.gauthierj.metamodel.processor.resolver.PropertyNameResolver`.
+
+---
+
+## Integration tests
+
+See the integration tests for comprehensive working examples: https://github.com/gauthierj/metamodel/tree/master/metamodel-integration-test
