@@ -1,10 +1,12 @@
 package com.github.gauthierj.metamodel.classbuilder;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ClassBuilderImpl extends _ClassBuilderImpl<ClassBuilder> implements ClassBuilder {
 
-    private boolean hasImport = false;
+    private final Set<String> imports = new HashSet<>();
 
     protected ClassBuilderImpl(Collection<Modifier> modifiers,
                                String packageName,
@@ -16,31 +18,28 @@ public class ClassBuilderImpl extends _ClassBuilderImpl<ClassBuilder> implements
 
     @Override
     public ClassBuilder addImport(String type) {
-        this.hasImport = true;
-        importWriter().writeln("import " + type + ";");
+        if(this.imports.add(type)) {
+            importWriter().writeln("import " + type + ";");
+        }
         return this;
     }
 
     @Override
     public InnerClassBuilder innerClass(Collection<Modifier> modifiers, String name) {
-        if(hasMember()) {
-            this.innerClassWriter().writeln("");
-        }
+        writeEmptyLineIfNeeded(this.innerClassWriter());
         return new InnerClassBuilderImpl(this, this.innerClassWriter(), modifiers, name, null);
     }
 
     @Override
     public InnerClassBuilder innerClass(Collection<Modifier> modifiers, String name, String superClassOpt, String... interfacesOpt) {
-        if(hasMember()) {
-            this.innerClassWriter().writeln("");
-        }
+        writeEmptyLineIfNeeded(this.innerClassWriter());
         return new InnerClassBuilderImpl(this, this.innerClassWriter(), modifiers, name, superClassOpt, interfacesOpt);
     }
 
     @Override
     public String build() {
         super.doBuild();
-        if(hasImport) {
+        if(!this.imports.isEmpty()) {
             importWriter().writeln("");
         }
         return topWriter().toString().replaceAll("\n\\s+\n", "\n\n");

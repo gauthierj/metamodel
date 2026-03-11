@@ -4,10 +4,13 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.gauthierj</groupId>
+    <groupId>io.github.gauthierj</groupId>
     <artifactId>metamodel</artifactId>
-    <version>1.0.0-RC6</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
+
+    <name>${project.artifactId}</name>
+    <description>Java annotation processor that generates type-safe metamodel classes, enabling refactor-safe access to property names and paths at compile time.</description>
 
     <url>https://github.com/gauthierj/metamodel</url>
 
@@ -29,15 +32,14 @@
     <scm>
         <url>https://github.com/gauthierj/metamodel</url>
         <connection>scm:git:git@github.com:gauthierj/metamodel.git</connection>
-        <developerConnection>scm:git:ssh//github.com:gauthierj/metamodel.git</developerConnection>
+        <developerConnection>scm:git:ssh://github.com:gauthierj/metamodel.git</developerConnection>
     </scm>
 
     <distributionManagement>
-        <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${staging.m2.repo}</url>
-        </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/gauthierj/metamodel</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <modules>
@@ -51,42 +53,41 @@
     </modules>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <staging.m2.repo>${project.build.directory}/mvn-repo</staging.m2.repo>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.github.gauthierj</groupId>
+                <groupId>io.github.gauthierj</groupId>
                 <artifactId>metamodel-annotation</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.gauthierj</groupId>
+                <groupId>io.github.gauthierj</groupId>
                 <artifactId>metamodel-classbuilder</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.gauthierj</groupId>
+                <groupId>io.github.gauthierj</groupId>
                 <artifactId>metamodel-generator</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.gauthierj</groupId>
+                <groupId>io.github.gauthierj</groupId>
                 <artifactId>metamodel-model</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.gauthierj</groupId>
+                <groupId>io.github.gauthierj</groupId>
                 <artifactId>metamodel-mongo-extension</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.gauthierj</groupId>
+                <groupId>io.github.gauthierj</groupId>
                 <artifactId>metamodel-processor</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -162,46 +163,39 @@
                             </execution>
                         </executions>
                     </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>github-deploy</id>
-            <build>
-                <plugins>
                     <plugin>
-                        <artifactId>maven-deploy-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <configuration>
-                            <altDeploymentRepository>internal.repo::file://${staging.m2.repo}</altDeploymentRepository>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.github</groupId>
-                        <artifactId>site-maven-plugin</artifactId>
-                        <version>0.12</version>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.4</version>
                         <executions>
                             <execution>
-                                <id>github-deploy</id>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
                                 <goals>
-                                    <goal>site</goal>
+                                    <goal>sign</goal>
                                 </goals>
-                                <phase>deploy</phase>
                                 <configuration>
-                                    <server>github</server>
-                                    <repositoryOwner>gauthierj</repositoryOwner>    <!-- github username  -->
-                                    <repositoryName>metamodel</repositoryName>      <!-- github repo name -->
-                                    <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
-                                    <merge>true</merge>
-                                    <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
-                                    <outputDirectory>${staging.m2.repo}</outputDirectory> <!-- matches distribution management repository url above -->
-                                    <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
-                                    <includes>
-                                        <include>**/*</include>
-                                    </includes>
+                                    <passphrase>${env.MAVEN_GPG_PASSPHRASE}</passphrase>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                        <arg>--trust-model</arg>
+                                        <arg>always</arg>
+                                    </gpgArguments>
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.6.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

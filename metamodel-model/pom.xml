@@ -6,10 +6,13 @@
 
     <artifactId>metamodel-model</artifactId>
 
+    <name>${project.artifactId}</name>
+    <description>Runtime base classes for generated metamodel instances.</description>
+
     <parent>
-        <groupId>com.github.gauthierj</groupId>
+        <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>
-        <version>1.0.0-RC6</version>
+        <version>1.0.0</version>
     </parent>
 
 </project>

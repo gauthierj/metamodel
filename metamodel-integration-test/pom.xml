@@ -6,23 +6,30 @@
 
     <artifactId>metamodel-integration-test</artifactId>
 
+    <name>${project.artifactId}</name>
+    <description>Integration tests for the metamodel annotation processor.</description>
+
     <parent>
-        <groupId>com.github.gauthierj</groupId>
+        <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>
-        <version>1.0.0-RC6</version>
+        <version>1.0.0</version>
     </parent>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.gauthierj</groupId>
+            <groupId>io.github.gauthierj</groupId>
             <artifactId>metamodel-annotation</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.gauthierj</groupId>
+            <groupId>io.github.gauthierj</groupId>
             <artifactId>metamodel-model</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.gauthierj</groupId>
+            <groupId>io.github.gauthierj</groupId>
             <artifactId>metamodel-processor</artifactId>
             <scope>provided</scope>
         </dependency>

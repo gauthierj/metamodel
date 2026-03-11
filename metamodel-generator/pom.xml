@@ -6,19 +6,22 @@
 
     <artifactId>metamodel-generator</artifactId>
 
+    <name>${project.artifactId}</name>
+    <description>Core source code generator that produces metamodel classes from type information.</description>
+
     <parent>
-        <groupId>com.github.gauthierj</groupId>
+        <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>
-        <version>1.0.0-RC6</version>
+        <version>1.0.0</version>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.gauthierj</groupId>
+            <groupId>io.github.gauthierj</groupId>
             <artifactId>metamodel-classbuilder</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.gauthierj</groupId>
+            <groupId>io.github.gauthierj</groupId>
             <artifactId>metamodel-model</artifactId>
         </dependency>
 

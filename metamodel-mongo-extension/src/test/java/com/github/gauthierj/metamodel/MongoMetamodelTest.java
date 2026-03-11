@@ -32,16 +32,16 @@ class MongoMetamodelTest {
         Optional<JavaFileObject> javaFileObject = compile.generatedSourceFile("com.github.gauthierj.metamodel.mongo.extension.model._SimpleModelByField");
         String simpleModelByField = javaFileObject.orElseThrow().getCharContent(true).toString();
 
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "anIntProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aPrimitiveBooleanProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aBooleanProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringListProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringArray"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "anIdProperty", "_id"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aPropertyWithADifferentName", "someDifferentName"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "anotherPropertyWithADifferentName", "someOtherDifferentName"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aPropertyThatKeepsOriginalName"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aStringProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "anIntProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aPrimitiveBooleanProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aBooleanProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aStringListProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aStringArray"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "anIdProperty", "_id"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aPropertyWithADifferentName", "someDifferentName"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "anotherPropertyWithADifferentName", "someOtherDifferentName"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aPropertyThatKeepsOriginalName"));
         assertTrue(hasComplexProperty(simpleModelByField, "aMapProperty", "_Model"));
     }
 
@@ -61,24 +61,24 @@ class MongoMetamodelTest {
         Optional<JavaFileObject> javaFileObject = compile.generatedSourceFile("com.github.gauthierj.metamodel.mongo.extension.model._SimpleModelByGetter");
         String simpleModelByField = javaFileObject.orElseThrow().getCharContent(true).toString();
 
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "anIntProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aPrimitiveBooleanProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aBooleanProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringListProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringArray"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aStringProperty"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "anIdProperty", "_id"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aPropertyWithAnotherName", "someDifferentName"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "anotherPropertyWithADifferentName", "someOtherDifferentName"));
-        assertTrue(hasSimpleProprety(simpleModelByField, "aPropertyThatKeepsOriginalName"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aStringProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "anIntProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aPrimitiveBooleanProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aBooleanProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aStringListProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aStringArray"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aStringProperty"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "anIdProperty", "_id"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aPropertyWithAnotherName", "someDifferentName"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "anotherPropertyWithADifferentName", "someOtherDifferentName"));
+        assertTrue(hasSimpleProperty(simpleModelByField, "aPropertyThatKeepsOriginalName"));
     }
 
-    private boolean hasSimpleProprety(String javaFile, String logicalName) {
-        return hasSimpleProprety(javaFile, logicalName, logicalName);
+    private boolean hasSimpleProperty(String javaFile, String logicalName) {
+        return hasSimpleProperty(javaFile, logicalName, logicalName);
     }
 
-    private boolean hasSimpleProprety(String javaFile, String logicalName, String name) {
+    private boolean hasSimpleProperty(String javaFile, String logicalName, String name) {
         boolean hasStaticPropertyField = javaFile.contains(String.format("private static final String PROPERTY_%s = \"%s\"", StringUtils.upperSnakeCase(logicalName), name));
         boolean hasMethod = javaFile.contains(String.format("public String %s()", logicalName));
         return hasStaticPropertyField && hasMethod;

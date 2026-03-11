@@ -6,15 +6,18 @@
 
     <artifactId>metamodel-mongo-extension</artifactId>
 
+    <name>${project.artifactId}</name>
+    <description>Spring Data MongoDB extension that triggers metamodel generation for @Document-annotated classes.</description>
+
     <parent>
-        <groupId>com.github.gauthierj</groupId>
+        <groupId>io.github.gauthierj</groupId>
         <artifactId>metamodel</artifactId>
-        <version>1.0.0-RC6</version>
+        <version>1.0.0</version>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.gauthierj</groupId>
+            <groupId>io.github.gauthierj</groupId>
             <artifactId>metamodel-processor</artifactId>
         </dependency>
         <dependency>

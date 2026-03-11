@@ -3,8 +3,6 @@ package com.github.gauthierj.metamodel.processor.util;
 import com.github.gauthierj.metamodel.annotation.Model;
 import com.github.gauthierj.metamodel.annotation.Property;
 import com.github.gauthierj.metamodel.annotation.PropertyAccessMode;
-import com.github.gauthierj.metamodel.classbuilder.StringUtils;
-
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -18,11 +16,11 @@ public final class ElementUtil {
         throw new IllegalStateException("Cannot instantiate");
     }
 
-    public static PropertyAccessMode getPropertyAccesMode(Element e) {
-        return getPropertyAccesMode(e, Model.DEFAULT_ACCESS_MODE);
+    public static PropertyAccessMode getPropertyAccessMode(Element e) {
+        return getPropertyAccessMode(e, Model.DEFAULT_ACCESS_MODE);
     }
 
-    public static PropertyAccessMode getPropertyAccesMode(Element e, PropertyAccessMode defaultValue) {
+    public static PropertyAccessMode getPropertyAccessMode(Element e, PropertyAccessMode defaultValue) {
         return Optional.of(e)
                 .map(elm -> elm.getAnnotation(Model.class))
                 .map(Model::accessMode)
@@ -51,7 +49,7 @@ public final class ElementUtil {
         return Optional.of(te)
                 .map(elm -> elm.getAnnotation(Model.class))
                 .map(Model::generatedClassName)
-                .filter(StringUtils::isNotBlank)
+                .filter(name -> !Model.DEFAULT_GENERATED_CLASS_NAME.equals(name))
                 .orElseGet(() -> "_" + te.getSimpleName());
     }
 
@@ -59,7 +57,7 @@ public final class ElementUtil {
         return Optional.of(e)
                 .map(elm -> elm.getAnnotation(Model.class))
                 .map(Model::generatedClassName)
-                .filter(StringUtils::isNotBlank)
+                .filter(name -> !Model.DEFAULT_GENERATED_CLASS_NAME.equals(name))
                 .orElseGet(() -> "_" + te.getSimpleName());
     }
 
