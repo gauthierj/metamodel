@@ -8,7 +8,7 @@ import java.util.List;
  * Immutable metadata describing a type for which a metamodel class will be generated.
  *
  * <p>This interface is part of the extension SPI. Implementations of
- * {@link com.github.gauthierj.metamodel.processor.ModelAnnotationProvider} and
+ * {@code ModelAnnotationProvider} and
  * {@link com.github.gauthierj.metamodel.generator.PropertyInformationHandler} receive
  * {@code TypeInformation} instances to inspect the type being processed and guide
  * code generation.
@@ -68,7 +68,7 @@ public interface TypeInformation {
      * Returns the simple name of the generated metamodel class.
      *
      * <p>Defaults to {@code "_" + className()}. Can be overridden via
-     * {@link com.github.gauthierj.metamodel.annotation.Model#generatedClassName()}.
+     * {@code @Model(generatedClassName = "...")}.
      *
      * @return the simple name of the generated class, e.g. {@code "_Person"}
      */
