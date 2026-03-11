@@ -6,7 +6,7 @@ A simple metamodel generator for Java classes.
 
 This tool is useful when property names of Java classes need to be referenced in the code — for example in validation error objects indicating which field is faulty, or in criteria APIs such as the MongoDB client. It generates a metamodel class that provides type-safe, refactor-safe access to property names and paths.
 
-**Java 11+** required.
+**Java 17+** required.
 
 ---
 
